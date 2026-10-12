@@ -10,7 +10,10 @@ data/recordings/*.wav
 data/recordings/*.m4a
 !data/recordings/.gitkeep
 reports/*.html
-reports/*.md
+# The memo and the generated report are the deliverables -- a reviewer should
+# be able to read the actual results without an API key and a 20-minute run.
+!reports/MEMO.md
+!reports/launch_readiness.md
 !reports/.gitkeep
 sessions/
 .DS_Store
