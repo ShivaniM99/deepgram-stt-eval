@@ -1,0 +1,10 @@
+{
+  "_note": "Measured to test whether the 45% fragmentation seen on tier A was a property of the system or an artifact of synthetic prosody -- macOS `say` renders a comma as a long pause. The hypothesis was that real speech would fragment LESS. It fragments considerably more: a human reading a long sentence containing a seven-digit number pauses naturally and variably, where TTS is metronomic. Tier A understated the problem by roughly 2.5x.",
+  "condition": "telephony_8k_ulaw",
+  "rows": [
+    {"tier": "A_domain_synthetic", "endpointing_ms": 300,  "n": 16, "fragmentation_rate": 0.38, "mean_segments": 1.4, "final_p50_ms": 602},
+    {"tier": "A_domain_synthetic", "endpointing_ms": 1000, "n": 16, "fragmentation_rate": 0.38, "mean_segments": 1.4, "final_p50_ms": 1246},
+    {"tier": "C_real_domain",      "endpointing_ms": 300,  "n": 16, "fragmentation_rate": 0.94, "mean_segments": 2.1, "final_p50_ms": 706},
+    {"tier": "C_real_domain",      "endpointing_ms": 1000, "n": 16, "fragmentation_rate": 0.88, "mean_segments": 1.9, "final_p50_ms": 1396}
+  ]
+}

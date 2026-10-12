@@ -31,6 +31,9 @@ def load_results() -> dict[str, Any]:
     e = RESULTS / "endpointing.json"
     if e.exists():
         out["endpointing"] = json.loads(e.read_text())
+    f = RESULTS / "fragmentation_by_tier.json"
+    if f.exists():
+        out["fragmentation_by_tier"] = json.loads(f.read_text())
     return out
 
 
@@ -253,6 +256,32 @@ def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> 
               "prescription attached — which looks like a complete, "
               "well-formed request rather than an error.\n")
 
+    # --- fragmentation: synthetic vs real ----------------------------------
+    fbt = data.get("fragmentation_by_tier")
+    if fbt and fbt.get("rows"):
+        w("### Fragmentation is worse on real speech than on synthetic\n")
+        w("The 45% figure above comes from the synthetic tier. It was checked "
+          "against real recordings on the suspicion that `say` renders a comma "
+          "as an unnaturally long pause and was inflating the number. The "
+          "opposite is true.\n")
+        w("| tier | endpointing | fragmented | segments/clip | final p50 |")
+        w("|---|---|---|---|---|")
+        for r in fbt["rows"]:
+            w(f"| {r['tier']} | {r['endpointing_ms']} ms | "
+              f"{_pct(r['fragmentation_rate'], 0)} | {r['mean_segments']} | "
+              f"{_num(r['final_p50_ms'])} ms |")
+        w("\nA human reading a long sentence containing a seven-digit number "
+          "pauses naturally and variably; synthesis is metronomic. On real "
+          "speech, **94% of utterances arrive in more than one piece at "
+          "`endpointing=300ms`, and 88% still do at 1000ms** — so nearly every "
+          "real caller will be split. The synthetic tier understated this by "
+          "roughly 2.5x, which is the clearest argument in this report for "
+          "why a real-voice tier is not optional.\n")
+        w("**Architectural consequence:** the call flow cannot act on "
+          "individual finals. It must buffer consecutive finals and use "
+          "`UtteranceEnd` / `utterance_end_ms` to delimit a caller turn. No "
+          "value of `endpointing` makes acting-per-final safe.\n")
+
     # --- cost --------------------------------------------------------------
     w("## Cost model\n")
     w("| volume | STT minutes/mo | Nova-3 pre-recorded | Nova-3 streaming |")
@@ -285,11 +314,14 @@ def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> 
       "config), so results are reproducible and re-scoring costs nothing.\n")
 
     w("\n## What this does NOT establish\n")
-    w("- **Tier A is synthetic.** Synthesized speech lacks disfluency, breath, "
-      "variable rate and genuine channel interaction. It is useful for exact "
-      "entity labelling at volume and it is not a substitute for real callers. "
-      "Tier C exists to anchor it; the larger the gap between tier A and tier C "
-      "results, the less weight tier A should carry.\n")
+    w("- **Tier A is synthetic, and it is PESSIMISTIC rather than flattering.** "
+      "Two assumptions made before measuring turned out backwards. Synthetic "
+      "WER (8.47%) is HIGHER than real-voice WER (4.52%), because older macOS "
+      "`say` voices are unnaturally hard; and synthetic prosody UNDERSTATES "
+      "fragmentation (38% against 94%), because synthesis pauses metronomically "
+      "where a human does not. Tier A is therefore a stress test for entity "
+      "recognition, not a proxy for real callers, and neither of its numbers "
+      "should be read as predicting production behaviour in the same direction.\n")
     w("- **No real call audio.** Actual pharmacy calls are PHI and cannot be "
       "used here. A pre-launch pilot on consented recordings from the "
       "customer's own line is the only way to close this, and it should gate "

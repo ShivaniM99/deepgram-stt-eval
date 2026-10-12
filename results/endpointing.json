@@ -1,0 +1,1094 @@
+{
+  "baseline_rtt": {
+    "rtt_p50_ms": 79.88845801446587,
+    "rtt_min_ms": 76.02825004141778,
+    "n": 5
+  },
+  "condition": "telephony_8k_ulaw",
+  "points": [
+    {
+      "endpointing_ms": 10,
+      "n_clips": 20,
+      "final_p50": 310.61350001953537,
+      "final_p95": 508.8093412755987,
+      "final_p99": 1087.3257954549051,
+      "ttfi_p50": 1044.6524374419823,
+      "fragmentation_rate": 0.75,
+      "mean_segments": 2.05,
+      "empty_rate": 0.0,
+      "n_natural_finals": 30
+    },
+    {
+      "endpointing_ms": 100,
+      "n_clips": 20,
+      "final_p50": 412.555916947313,
+      "final_p95": 1915.0438968151288,
+      "final_p99": 2219.094260097611,
+      "ttfi_p50": 1045.6780624808744,
+      "fragmentation_rate": 0.65,
+      "mean_segments": 1.75,
+      "empty_rate": 0.0,
+      "n_natural_finals": 25
+    },
+    {
+      "endpointing_ms": 300,
+      "n_clips": 20,
+      "final_p50": 675.6672589364898,
+      "final_p95": 2017.039941777475,
+      "final_p99": 2267.871621166356,
+      "ttfi_p50": 1040.1112920371816,
+      "fragmentation_rate": 0.45,
+      "mean_segments": 1.45,
+      "empty_rate": 0.0,
+      "n_natural_finals": 17
+    },
+    {
+      "endpointing_ms": 500,
+      "n_clips": 20,
+      "final_p50": 954.4279660587636,
+      "final_p95": 2016.1676837736738,
+      "final_p99": 2276.4464031243697,
+      "ttfi_p50": 1041.6167909861542,
+      "fragmentation_rate": 0.45,
+      "mean_segments": 1.45,
+      "empty_rate": 0.0,
+      "n_natural_finals": 17
+    },
+    {
+      "endpointing_ms": 1000,
+      "n_clips": 20,
+      "final_p50": 1210.1747920131309,
+      "final_p95": 2033.9817416062576,
+      "final_p99": 2286.940914689563,
+      "ttfi_p50": 1039.3748754868284,
+      "fragmentation_rate": 0.45,
+      "mean_segments": 1.45,
+      "empty_rate": 0.0,
+      "n_natural_finals": 17
+    }
+  ],
+  "recommendation": {
+    "recommended_endpointing_ms": null,
+    "reason": "no swept value held fragmentation at or below 10% (best was 45% if measured). Utterances in this corpus contain internal pauses long enough to finalize on, so the knob alone cannot keep them whole -- the call flow must reassemble consecutive finals before acting, or utterance_end_ms must be used to delimit turns.",
+    "fragmentation_by_setting": [
+      {
+        "endpointing_ms": 10,
+        "fragmentation_rate": 0.75,
+        "final_p95_ms": 508.8093412755987
+      },
+      {
+        "endpointing_ms": 100,
+        "fragmentation_rate": 0.65,
+        "final_p95_ms": 1915.0438968151288
+      },
+      {
+        "endpointing_ms": 300,
+        "fragmentation_rate": 0.45,
+        "final_p95_ms": 2017.039941777475
+      },
+      {
+        "endpointing_ms": 500,
+        "fragmentation_rate": 0.45,
+        "final_p95_ms": 2016.1676837736738
+      },
+      {
+        "endpointing_ms": 1000,
+        "fragmentation_rate": 0.45,
+        "final_p95_ms": 2033.9817416062576
+      }
+    ]
+  },
+  "per_clip": {
+    "10": [
+      {
+        "uid": "A0001_telephony_8k_ulaw",
+        "ttfi_ms": 1043.4896249789745,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          310.7014579884706
+        ],
+        "transcript": "I'd like a refill on hydralazine fifty milligrams, Prescription number 1000881."
+      },
+      {
+        "uid": "A0003_telephony_8k_ulaw",
+        "ttfi_ms": 1045.8152499049902,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          309.1685829544444
+        ],
+        "transcript": "My prescription number is 4883198, and the medication is clonidine."
+      },
+      {
+        "uid": "A0004_telephony_8k_ulaw",
+        "ttfi_ms": 1032.307666959241,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          204.48349996469918,
+          373.59734196453064
+        ],
+        "transcript": "Can you check if my lorazepam is ready for pickup? Rx 6618215."
+      },
+      {
+        "uid": "A0007_telephony_8k_ulaw",
+        "ttfi_ms": 1498.5447919461876,
+        "n_segments": 3,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          192.2907500481233,
+          290.8168339636177
+        ],
+        "transcript": "Yes. That's metformin. Not the other one. Prescription 2167851."
+      },
+      {
+        "uid": "A0009_telephony_8k_ulaw",
+        "ttfi_ms": 1041.7140829376876,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          170.19754198845493
+        ],
+        "transcript": "The number on the bottle is 1042659. And it says glipizide."
+      },
+      {
+        "uid": "A0011_telephony_8k_ulaw",
+        "ttfi_ms": 1051.2773329392076,
+        "n_segments": 3,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          290.70429098326713,
+          535.736290956847
+        ],
+        "transcript": "Could you refill tramadol for me? Born 07/17/1996, Rx number 3671480."
+      },
+      {
+        "uid": "A0014_telephony_8k_ulaw",
+        "ttfi_ms": 1031.3282079296187,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          395.44395906385034,
+          279.65298399955964
+        ],
+        "transcript": "Date of birth, 09/02/1967. Prescription number, 2353015. Thank you."
+      },
+      {
+        "uid": "A0016_telephony_8k_ulaw",
+        "ttfi_ms": 1035.0805000634864,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          350.3271660255267
+        ],
+        "transcript": "I'd like a refill on a meal order on two hundred milligrams. Prescription number 3562773."
+      },
+      {
+        "uid": "A0018_telephony_8k_ulaw",
+        "ttfi_ms": 1038.6933329282328,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "My prescription number is 9105232, and the medication is captopril."
+      },
+      {
+        "uid": "A0019_telephony_8k_ulaw",
+        "ttfi_ms": 1036.2829170189798,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          299.3415830237791
+        ],
+        "transcript": "Can you check if my cycloserine is ready for pickup? Rx 5774023"
+      },
+      {
+        "uid": "A0022_telephony_8k_ulaw",
+        "ttfi_ms": 1540.3570419875905,
+        "n_segments": 3,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          143.5321449533445,
+          311.1840419098737
+        ],
+        "transcript": "Yes. That's fluvoxamine. Not the other one. Prescription 1202362."
+      },
+      {
+        "uid": "A0024_telephony_8k_ulaw",
+        "ttfi_ms": 1052.651708945632,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          356.8086249846969
+        ],
+        "transcript": "The number on the bottle is 1398942. And it says paroxetine."
+      },
+      {
+        "uid": "A0026_telephony_8k_ulaw",
+        "ttfi_ms": 1053.411665954627,
+        "n_segments": 3,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          310.5255420506001,
+          420.18662510439776
+        ],
+        "transcript": "Could you refill oxycodone for me? Born 09/11/1949. RX number 4986457."
+      },
+      {
+        "uid": "A0029_telephony_8k_ulaw",
+        "ttfi_ms": 1037.320249946788,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          442.8379169944674,
+          396.6999169951304
+        ],
+        "transcript": "Date of birth, 08/27/1989. Respiration number, 2309368. Thank you."
+      },
+      {
+        "uid": "A0031_telephony_8k_ulaw",
+        "ttfi_ms": 1035.1698749000207,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          303.36049205936934
+        ],
+        "transcript": "I'd like a refill on metolazone two point five milligrams. Prescription number 6967795."
+      },
+      {
+        "uid": "A0033_telephony_8k_ulaw",
+        "ttfi_ms": 1053.596124984324,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1312.622917010449,
+          460.376208955422
+        ],
+        "transcript": "My prescription number is 2623701, and the Medicare medication is nifedipine."
+      },
+      {
+        "uid": "A0034_telephony_8k_ulaw",
+        "ttfi_ms": 3060.8546249568462,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          442.8049999102952,
+          334.43562500644487
+        ],
+        "transcript": "Can you check if my crazy April is ready for pickup? Rx 9616311."
+      },
+      {
+        "uid": "A0037_telephony_8k_ulaw",
+        "ttfi_ms": 1558.6450420087203,
+        "n_segments": 3,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          163.60656195304963,
+          215.42730795609066
+        ],
+        "transcript": "Yes. That's Raffini roll. Not the other one. Prescription 8597089."
+      },
+      {
+        "uid": "A0039_telephony_8k_ulaw",
+        "ttfi_ms": 1036.3673749379814,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          217.2909160330896
+        ],
+        "transcript": "The number on the bottle is 4905680. And it says valacyclovir."
+      },
+      {
+        "uid": "A0041_telephony_8k_ulaw",
+        "ttfi_ms": 1046.320499968715,
+        "n_segments": 3,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          271.1062500020489,
+          475.8986249985178
+        ],
+        "transcript": "Could you refill lamotrigine for me? Born 03/27/1976. RX number 9705825."
+      }
+    ],
+    "100": [
+      {
+        "uid": "A0001_telephony_8k_ulaw",
+        "ttfi_ms": 1050.3603749675676,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          394.33250003028644
+        ],
+        "transcript": "I'd like a refill on hydralazine fifty milligrams, Prescription number 1000881."
+      },
+      {
+        "uid": "A0003_telephony_8k_ulaw",
+        "ttfi_ms": 1032.3852919973433,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          373.45858389511744
+        ],
+        "transcript": "My prescription number is 4883198, and the medication is clonidine."
+      },
+      {
+        "uid": "A0004_telephony_8k_ulaw",
+        "ttfi_ms": 1044.845916912891,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          361.45945799537003,
+          462.98908306285733
+        ],
+        "transcript": "Can you check if my lorazepam is ready for pickup? Rx 6618215."
+      },
+      {
+        "uid": "A0007_telephony_8k_ulaw",
+        "ttfi_ms": 1598.3783749397844,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          278.25629205442965
+        ],
+        "transcript": "Yes. That's metformin, not the other one. Prescription 2167851."
+      },
+      {
+        "uid": "A0009_telephony_8k_ulaw",
+        "ttfi_ms": 1045.5172499641776,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          294.94425798537895
+        ],
+        "transcript": "The number on the bottle is 1042659, and it says glipizide."
+      },
+      {
+        "uid": "A0011_telephony_8k_ulaw",
+        "ttfi_ms": 1043.118332978338,
+        "n_segments": 3,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          345.52066600415856,
+          2277.734008019368
+        ],
+        "transcript": "Could you refill tramadol for me? Born 07/17/1996, Rx number 3671480."
+      },
+      {
+        "uid": "A0014_telephony_8k_ulaw",
+        "ttfi_ms": 1030.8080420363694,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1441.6125840274617,
+          473.5625500581664
+        ],
+        "transcript": "Date of birth, 09/02/1967. Prescription number, 2353015. Thank you."
+      },
+      {
+        "uid": "A0016_telephony_8k_ulaw",
+        "ttfi_ms": 1039.009082945995,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          424.24175003077823
+        ],
+        "transcript": "I'd like a refill on a meal order on two hundred milligrams. Prescription number 3562773."
+      },
+      {
+        "uid": "A0018_telephony_8k_ulaw",
+        "ttfi_ms": 1048.7016249680892,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "My prescription number is 9105232, and the medication is captopril."
+      },
+      {
+        "uid": "A0019_telephony_8k_ulaw",
+        "ttfi_ms": 1045.838874997571,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          319.06312500126654,
+          481.9225410418584
+        ],
+        "transcript": "Can you check if my cycloserine is ready for pickup? Rx 5774023."
+      },
+      {
+        "uid": "A0022_telephony_8k_ulaw",
+        "ttfi_ms": 1785.957625019364,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          401.4662700936538
+        ],
+        "transcript": "Yes. That's fluvoxamine, not the other one. Prescription 1202362."
+      },
+      {
+        "uid": "A0024_telephony_8k_ulaw",
+        "ttfi_ms": 1044.2536670016125,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          376.6149579267948
+        ],
+        "transcript": "The number on the bottle is 1398942. And it says thyroxetine."
+      },
+      {
+        "uid": "A0026_telephony_8k_ulaw",
+        "ttfi_ms": 1043.6975409975275,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Could you refill oxycodone for me? Born 09/11/1949. Rx number 4986457."
+      },
+      {
+        "uid": "A0029_telephony_8k_ulaw",
+        "ttfi_ms": 1049.5868340367451,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          623.0801169605597,
+          471.6430419293936
+        ],
+        "transcript": "Date of birth, 08/27/1989. Respiration number, 2309368. Thank you."
+      },
+      {
+        "uid": "A0031_telephony_8k_ulaw",
+        "ttfi_ms": 1041.1259590182453,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          456.7848670513972
+        ],
+        "transcript": "I'd like a refill on metolazone two point five milligrams. Prescription number 6967795."
+      },
+      {
+        "uid": "A0033_telephony_8k_ulaw",
+        "ttfi_ms": 1049.5046670548618,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1314.7923329472544,
+          396.22808290179813
+        ],
+        "transcript": "My prescription number is 2623701, and the Medicare medication is nifedipine."
+      },
+      {
+        "uid": "A0034_telephony_8k_ulaw",
+        "ttfi_ms": 3093.0361250648275,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          560.1065840153026,
+          412.555916947313
+        ],
+        "transcript": "Can you check if my crazy April is ready for pickup? Rx 9616311."
+      },
+      {
+        "uid": "A0037_telephony_8k_ulaw",
+        "ttfi_ms": 1643.3398330118507,
+        "n_segments": 3,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          259.5516029976648,
+          2033.4017250120478
+        ],
+        "transcript": "Yes. That's rapini roll, not the other one. Prescription. 8597089."
+      },
+      {
+        "uid": "A0039_telephony_8k_ulaw",
+        "ttfi_ms": 1037.2183340368792,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          281.5539250406873
+        ],
+        "transcript": "The number on the bottle is 4905680. And it says valacyclovir."
+      },
+      {
+        "uid": "A0041_telephony_8k_ulaw",
+        "ttfi_ms": 1070.7220000913367,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Could you refill Lamotrigine for me? Born 03/27/1976. Rx number 9705825."
+      }
+    ],
+    "300": [
+      {
+        "uid": "A0001_telephony_8k_ulaw",
+        "ttfi_ms": 1037.2278329450637,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          2330.579541013576
+        ],
+        "transcript": "I'd like a refill on hydralazine fifty milligrams, prescription number 1000881."
+      },
+      {
+        "uid": "A0003_telephony_8k_ulaw",
+        "ttfi_ms": 1043.723625014536,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          546.8534590303901
+        ],
+        "transcript": "My prescription number is 4883198, and the medication is clonidine."
+      },
+      {
+        "uid": "A0004_telephony_8k_ulaw",
+        "ttfi_ms": 1034.0753329219297,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Can you check if my lorazepam is ready for pickup? Rx 6618215."
+      },
+      {
+        "uid": "A0007_telephony_8k_ulaw",
+        "ttfi_ms": 1055.2647500298917,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Yes. That's metformin, not the other one. Prescription 2167851."
+      },
+      {
+        "uid": "A0009_telephony_8k_ulaw",
+        "ttfi_ms": 1051.9831250421703,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          372.58154996442363
+        ],
+        "transcript": "The number on the bottle is 1042659, and it says glipizide."
+      },
+      {
+        "uid": "A0011_telephony_8k_ulaw",
+        "ttfi_ms": 1034.5824579708278,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          406.1531670298431
+        ],
+        "transcript": "Could you refill tramadol for me? Born 07/17/1996, Rx number 3671480."
+      },
+      {
+        "uid": "A0014_telephony_8k_ulaw",
+        "ttfi_ms": 1038.5524170706049,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1443.3881250210106,
+          675.6672589364898
+        ],
+        "transcript": "Date of birth, 09/02/1967. Prescription number, 2353015. Thank you."
+      },
+      {
+        "uid": "A0016_telephony_8k_ulaw",
+        "ttfi_ms": 1038.1048750132322,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1938.65504196845
+        ],
+        "transcript": "I'd like a refill on a meal order on two hundred milligrams. Prescription number 3562773."
+      },
+      {
+        "uid": "A0018_telephony_8k_ulaw",
+        "ttfi_ms": 1038.5545419994742,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "My prescription number is 9105232, and the medication is captopril."
+      },
+      {
+        "uid": "A0019_telephony_8k_ulaw",
+        "ttfi_ms": 1060.3896250249818,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1929.4926669634879
+        ],
+        "transcript": "Can you check if my cycloserine is ready for pickup? Are 5774023."
+      },
+      {
+        "uid": "A0022_telephony_8k_ulaw",
+        "ttfi_ms": 1051.190249971114,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Yes. That's fluvoxamine, not the other one. Prescription 1202362."
+      },
+      {
+        "uid": "A0024_telephony_8k_ulaw",
+        "ttfi_ms": 1044.3271250696853,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          583.1728751026093
+        ],
+        "transcript": "The number on the bottle is 1398942. And it says thyroxetine."
+      },
+      {
+        "uid": "A0026_telephony_8k_ulaw",
+        "ttfi_ms": 1041.668042074889,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Could you refill oxycodone for me? Born 09/11/1949. Rx number 4986457."
+      },
+      {
+        "uid": "A0029_telephony_8k_ulaw",
+        "ttfi_ms": 1030.9084999607876,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1094.0948750358075,
+          577.5321250315759
+        ],
+        "transcript": "Date of birth, 08/27/1989. Respiration number, 2309368. Thank you."
+      },
+      {
+        "uid": "A0031_telephony_8k_ulaw",
+        "ttfi_ms": 1043.169292039238,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1852.0802000522285
+        ],
+        "transcript": "I'd like a refill on metolazone two point five milligrams. Prescription number 6967795."
+      },
+      {
+        "uid": "A0033_telephony_8k_ulaw",
+        "ttfi_ms": 1035.6639999663457,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1292.7168340049686,
+          591.5551250381394
+        ],
+        "transcript": "My prescription number is 2623701, and the Medicare medication is nifedipine."
+      },
+      {
+        "uid": "A0034_telephony_8k_ulaw",
+        "ttfi_ms": 3046.6340000275522,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          754.2982090078297,
+          567.2771590132761
+        ],
+        "transcript": "Can you check if my crazy April is ready for pickup? Rx 9616311."
+      },
+      {
+        "uid": "A0037_telephony_8k_ulaw",
+        "ttfi_ms": 1037.0149589143693,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Yes. That's Raffini roll, not the other one. Prescription 8597089."
+      },
+      {
+        "uid": "A0039_telephony_8k_ulaw",
+        "ttfi_ms": 1035.8664999948815,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          436.9245840515941
+        ],
+        "transcript": "The number on the bottle is 4905680. And it says valacyclovir."
+      },
+      {
+        "uid": "A0041_telephony_8k_ulaw",
+        "ttfi_ms": 1043.008791981265,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Could you refill Lamotrigine for me? Born 03/27/1976. Rx number 9705825."
+      }
+    ],
+    "500": [
+      {
+        "uid": "A0001_telephony_8k_ulaw",
+        "ttfi_ms": 1053.980333963409,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          2341.5160829620436
+        ],
+        "transcript": "I'd like a refill on hydralazine fifty milligrams, Prescription number 1000881."
+      },
+      {
+        "uid": "A0003_telephony_8k_ulaw",
+        "ttfi_ms": 1041.2105409195647,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          521.4338750205937
+        ],
+        "transcript": "My prescription number is 4883198, and the medication is clonidine."
+      },
+      {
+        "uid": "A0004_telephony_8k_ulaw",
+        "ttfi_ms": 1034.0689580189064,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Can you check if my lorazepam is ready for pickup? Rx 6618215."
+      },
+      {
+        "uid": "A0007_telephony_8k_ulaw",
+        "ttfi_ms": 1045.3007500618696,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Yes. That's metformin, not the other one. Prescription 2167851."
+      },
+      {
+        "uid": "A0009_telephony_8k_ulaw",
+        "ttfi_ms": 1037.4867910286412,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          272.8041330562414
+        ],
+        "transcript": "The number on the bottle is 1042659, and it says glipizide."
+      },
+      {
+        "uid": "A0011_telephony_8k_ulaw",
+        "ttfi_ms": 1052.94616590254,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          416.94920895621215
+        ],
+        "transcript": "Could you refill tramadol for me? Born 07/17/1996, Rx number 3671480."
+      },
+      {
+        "uid": "A0014_telephony_8k_ulaw",
+        "ttfi_ms": 1060.2164579322562,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1470.0428750133142,
+          954.4279660587636
+        ],
+        "transcript": "Date of birth, 09/02/1967. Prescription number, 2353015. Thank you."
+      },
+      {
+        "uid": "A0016_telephony_8k_ulaw",
+        "ttfi_ms": 1042.0230410527438,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1934.8305839765817
+        ],
+        "transcript": "I'd like a refill on a meal order on two hundred milligrams. Prescription number 3562773."
+      },
+      {
+        "uid": "A0018_telephony_8k_ulaw",
+        "ttfi_ms": 1037.3736249748617,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "My prescription number is 9105232, and the medication is captopril."
+      },
+      {
+        "uid": "A0019_telephony_8k_ulaw",
+        "ttfi_ms": 1032.7900829724967,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1930.561707932502
+        ],
+        "transcript": "Can you check if my cycloserine is ready for pickup? Are 5774023."
+      },
+      {
+        "uid": "A0022_telephony_8k_ulaw",
+        "ttfi_ms": 1065.8781660022214,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Yes. That's fluvoxamine, not the other one. Prescription 1202362."
+      },
+      {
+        "uid": "A0024_telephony_8k_ulaw",
+        "ttfi_ms": 1050.7449579890817,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          776.5144590474664
+        ],
+        "transcript": "The number on the bottle is 1398942. And it says thyroxetine."
+      },
+      {
+        "uid": "A0026_telephony_8k_ulaw",
+        "ttfi_ms": 1047.572458977811,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Could you refill oxycodone for me? Born 09/11/1949. Rx number 4986457."
+      },
+      {
+        "uid": "A0029_telephony_8k_ulaw",
+        "ttfi_ms": 1034.576665959321,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1048.583000083454,
+          582.3585830861706
+        ],
+        "transcript": "Date of birth, 08/27/1989. Respiration number, 2309368. Thank you."
+      },
+      {
+        "uid": "A0031_telephony_8k_ulaw",
+        "ttfi_ms": 1033.9413330657408,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1842.518200002019
+        ],
+        "transcript": "I'd like a refill on metolazone two point five milligrams. Prescription number 6967795."
+      },
+      {
+        "uid": "A0033_telephony_8k_ulaw",
+        "ttfi_ms": 1032.740750000812,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1286.045458992012,
+          705.2389170601963
+        ],
+        "transcript": "My prescription number is 2623701, and the Medicare medication is nifedipine."
+      },
+      {
+        "uid": "A0034_telephony_8k_ulaw",
+        "ttfi_ms": 3041.408249991946,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1763.9087919658052,
+          679.2741670506075
+        ],
+        "transcript": "Can you check if my crazy April is ready for pickup? Rx 9616311."
+      },
+      {
+        "uid": "A0037_telephony_8k_ulaw",
+        "ttfi_ms": 1052.455750061199,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Yes. That's Raffini roll, not the other one. Prescription 8597089."
+      },
+      {
+        "uid": "A0039_telephony_8k_ulaw",
+        "ttfi_ms": 1038.723542005755,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          651.4942500088363
+        ],
+        "transcript": "The number on the bottle is 4905680. And it says valacyclovir."
+      },
+      {
+        "uid": "A0041_telephony_8k_ulaw",
+        "ttfi_ms": 1036.543000023812,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Could you refill Lamotrigine for me? Born 03/27/1976. Rx number 9705825."
+      }
+    ],
+    "1000": [
+      {
+        "uid": "A0001_telephony_8k_ulaw",
+        "ttfi_ms": 1038.0705420393497,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          2350.1807079603896
+        ],
+        "transcript": "I'd like a refill on hydralazine fifty milligrams, Prescription number 1000881."
+      },
+      {
+        "uid": "A0003_telephony_8k_ulaw",
+        "ttfi_ms": 1041.3447499740869,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          518.3845830010254
+        ],
+        "transcript": "My prescription number is 4883198, and the medication is clonidine."
+      },
+      {
+        "uid": "A0004_telephony_8k_ulaw",
+        "ttfi_ms": 1041.902415920049,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Can you check if my lorazepam is ready for pickup? Rx 6618215."
+      },
+      {
+        "uid": "A0007_telephony_8k_ulaw",
+        "ttfi_ms": 1037.9569999640808,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Yes. That's metformin, not the other one. Prescription 2167851."
+      },
+      {
+        "uid": "A0009_telephony_8k_ulaw",
+        "ttfi_ms": 1045.9285830147564,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          284.5562160225095
+        ],
+        "transcript": "The number on the bottle is 1042659, and it says glipizide."
+      },
+      {
+        "uid": "A0011_telephony_8k_ulaw",
+        "ttfi_ms": 1041.021000011824,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          404.99170894268934
+        ],
+        "transcript": "Could you refill tramadol for me? Born 07/17/1996, Rx number 3671480."
+      },
+      {
+        "uid": "A0014_telephony_8k_ulaw",
+        "ttfi_ms": 1039.5094589330256,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1445.8290410460904,
+          1156.7072160798562
+        ],
+        "transcript": "Date of birth, 09/02/1967. Prescription number, 2353015. Thank you."
+      },
+      {
+        "uid": "A0016_telephony_8k_ulaw",
+        "ttfi_ms": 1053.5854999907315,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1954.932000017725
+        ],
+        "transcript": "I'd like a refill on a meal order on two hundred milligrams. Prescription number 3562773."
+      },
+      {
+        "uid": "A0018_telephony_8k_ulaw",
+        "ttfi_ms": 1049.313708092086,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "My prescription number is 9105232, and the medication is captopril."
+      },
+      {
+        "uid": "A0019_telephony_8k_ulaw",
+        "ttfi_ms": 1031.8129169754684,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1922.5403750268742
+        ],
+        "transcript": "Can you check if my cycloserine is ready for pickup? Are 5774023."
+      },
+      {
+        "uid": "A0022_telephony_8k_ulaw",
+        "ttfi_ms": 1050.5309170112014,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Yes. That's fluvoxamine, not the other one. Prescription 1202362."
+      },
+      {
+        "uid": "A0024_telephony_8k_ulaw",
+        "ttfi_ms": 1034.985291888006,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          1191.7238330468533
+        ],
+        "transcript": "The number on the bottle is 1398942. And it says thyroxetine."
+      },
+      {
+        "uid": "A0026_telephony_8k_ulaw",
+        "ttfi_ms": 1030.3610829869285,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Could you refill oxycodone for me? Born 09/11/1949. Rx number 4986457."
+      },
+      {
+        "uid": "A0029_telephony_8k_ulaw",
+        "ttfi_ms": 1036.242333939299,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1069.2244590027258,
+          586.6352499928329
+        ],
+        "transcript": "Date of birth, 08/27/1989. Respiration number, 2309368. Thank you."
+      },
+      {
+        "uid": "A0031_telephony_8k_ulaw",
+        "ttfi_ms": 1030.3461250150576,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1845.3316579790458
+        ],
+        "transcript": "I'd like a refill on metolazone two point five milligrams. Prescription number 6967795."
+      },
+      {
+        "uid": "A0033_telephony_8k_ulaw",
+        "ttfi_ms": 1039.2402920406312,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1294.4497079681607,
+          1210.1747920131309
+        ],
+        "transcript": "My prescription number is 2623701, and the Medicare medication is nifedipine."
+      },
+      {
+        "uid": "A0034_telephony_8k_ulaw",
+        "ttfi_ms": 3041.4815829135478,
+        "n_segments": 2,
+        "fragmented": true,
+        "finalization_delays_ms": [
+          1760.6312909908595,
+          1264.3013329198584
+        ],
+        "transcript": "Can you check if my crazy April is ready for pickup? RX9616311."
+      },
+      {
+        "uid": "A0037_telephony_8k_ulaw",
+        "ttfi_ms": 1035.279417061247,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Yes. That's Raffini roll, not the other one. Prescription 8597089."
+      },
+      {
+        "uid": "A0039_telephony_8k_ulaw",
+        "ttfi_ms": 1032.3743330081925,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [
+          1138.0278749438003
+        ],
+        "transcript": "The number on the bottle is 4905680. And it says valacyclovir."
+      },
+      {
+        "uid": "A0041_telephony_8k_ulaw",
+        "ttfi_ms": 1072.9474580148235,
+        "n_segments": 1,
+        "fragmented": false,
+        "finalization_delays_ms": [],
+        "transcript": "Could you refill Lamotrigine for me? Born 03/27/1976. Rx number 9705825."
+      }
+    ]
+  }
+}

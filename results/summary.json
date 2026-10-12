@@ -1,26 +1,99 @@
 [
   {
     "arm": "baseline",
-    "wer_domain": 0.0,
-    "wer_control": 0.0,
-    "wer_real": 0.05555555555555555,
+    "wer_domain": 0.0904121110176619,
+    "wer_control": 0.027624309392265192,
+    "wer_real": 0.047872340425531915,
     "entities": {
       "drug": {
-        "n": 2,
-        "correct": 2,
+        "n": 376,
+        "correct": 325,
+        "miss": 51,
+        "cross_confusion": 0,
+        "accuracy": 0.8643617021276596,
+        "cross_confusion_rate": 0.0
+      },
+      "rx": {
+        "n": 188,
+        "correct": 188,
         "miss": 0,
         "cross_confusion": 0,
         "accuracy": 1.0,
         "cross_confusion_rate": 0.0
+      },
+      "dose": {
+        "n": 136,
+        "correct": 131,
+        "miss": 5,
+        "cross_confusion": 0,
+        "accuracy": 0.9632352941176471,
+        "cross_confusion_rate": 0.0
+      },
+      "dob": {
+        "n": 132,
+        "correct": 127,
+        "miss": 5,
+        "cross_confusion": 0,
+        "accuracy": 0.9621212121212122,
+        "cross_confusion_rate": 0.0
       }
     },
     "hallucination": {
-      "n_clips": 2,
+      "n_clips": 24,
       "n_fabricated": 0,
       "insertion_rate": 0.0,
       "by_probe": {
+        "babble": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "dial_tone": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
         "digital_silence": {
-          "n": 2,
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "dtmf_sequence": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "hold_music": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "line_noise": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "ring_tone": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "room_tone": {
+          "n": 3,
           "fabricated": 0,
           "rate": 0.0,
           "words_total": 0,
@@ -32,32 +105,507 @@
     "by_condition": [
       {
         "condition": "clean_16k",
-        "clips": 1,
-        "wer": 0.0,
-        "drug_accuracy": 1.0,
+        "clips": 100,
+        "wer": 0.08242220353238015,
+        "drug_accuracy": 0.8723404255319149,
         "drug_cross_confusion": 0.0,
-        "rx_accuracy": null,
-        "dob_accuracy": null
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9696969696969697
+      },
+      {
+        "condition": "opus_16k_reverb",
+        "clips": 100,
+        "wer": 0.07653490328006729,
+        "drug_accuracy": 0.9148936170212766,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9696969696969697
       },
       {
         "condition": "telephony_8k_ulaw",
-        "clips": 1,
-        "wer": 0.0,
-        "drug_accuracy": 1.0,
+        "clips": 100,
+        "wer": 0.08999158957106812,
+        "drug_accuracy": 0.8617021276595744,
         "drug_cross_confusion": 0.0,
-        "rx_accuracy": null,
-        "dob_accuracy": null
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9696969696969697
+      },
+      {
+        "condition": "telephony_noisy_10db",
+        "clips": 100,
+        "wer": 0.11269974768713205,
+        "drug_accuracy": 0.8085106382978723,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9393939393939394
       }
     ],
     "by_locale": [
       {
+        "locale": "en_AU",
+        "clips": 28,
+        "wer": 0.10112359550561797,
+        "drug_accuracy": 0.9285714285714286,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 1.0
+      },
+      {
         "locale": "en_GB",
-        "clips": 2,
-        "wer": 0.0,
+        "clips": 36,
+        "wer": 0.05048076923076923,
+        "drug_accuracy": 0.9722222222222222,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 1.0
+      },
+      {
+        "locale": "en_IE",
+        "clips": 32,
+        "wer": 0.08564814814814815,
+        "drug_accuracy": 0.8214285714285714,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 1.0
+      },
+      {
+        "locale": "en_IN",
+        "clips": 128,
+        "wer": 0.08643617021276596,
+        "drug_accuracy": 0.8467741935483871,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.8333333333333334
+      },
+      {
+        "locale": "en_US",
+        "clips": 156,
+        "wer": 0.10133630289532294,
+        "drug_accuracy": 0.8285714285714286,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9807692307692307
+      },
+      {
+        "locale": "en_ZA",
+        "clips": 20,
+        "wer": 0.09523809523809523,
         "drug_accuracy": 1.0,
         "drug_cross_confusion": 0.0,
-        "rx_accuracy": null,
-        "dob_accuracy": null
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 1.0
+      }
+    ]
+  },
+  {
+    "arm": "keyterm_all",
+    "wer_domain": 0.08473507148864592,
+    "wer_control": 0.028314917127071824,
+    "wer_real": 0.04521276595744681,
+    "entities": {
+      "drug": {
+        "n": 376,
+        "correct": 349,
+        "miss": 27,
+        "cross_confusion": 0,
+        "accuracy": 0.9281914893617021,
+        "cross_confusion_rate": 0.0
+      },
+      "rx": {
+        "n": 188,
+        "correct": 188,
+        "miss": 0,
+        "cross_confusion": 0,
+        "accuracy": 1.0,
+        "cross_confusion_rate": 0.0
+      },
+      "dose": {
+        "n": 136,
+        "correct": 132,
+        "miss": 4,
+        "cross_confusion": 0,
+        "accuracy": 0.9705882352941176,
+        "cross_confusion_rate": 0.0
+      },
+      "dob": {
+        "n": 132,
+        "correct": 127,
+        "miss": 5,
+        "cross_confusion": 0,
+        "accuracy": 0.9621212121212122,
+        "cross_confusion_rate": 0.0
+      }
+    },
+    "hallucination": {
+      "n_clips": 24,
+      "n_fabricated": 0,
+      "insertion_rate": 0.0,
+      "by_probe": {
+        "babble": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "dial_tone": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "digital_silence": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "dtmf_sequence": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "hold_music": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "line_noise": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "ring_tone": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "room_tone": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        }
+      }
+    },
+    "confusions": [],
+    "by_condition": [
+      {
+        "condition": "clean_16k",
+        "clips": 100,
+        "wer": 0.0782169890664424,
+        "drug_accuracy": 0.9468085106382979,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9696969696969697
+      },
+      {
+        "condition": "opus_16k_reverb",
+        "clips": 100,
+        "wer": 0.07485281749369217,
+        "drug_accuracy": 0.9574468085106383,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9696969696969697
+      },
+      {
+        "condition": "telephony_8k_ulaw",
+        "clips": 100,
+        "wer": 0.08074011774600505,
+        "drug_accuracy": 0.9361702127659575,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9696969696969697
+      },
+      {
+        "condition": "telephony_noisy_10db",
+        "clips": 100,
+        "wer": 0.10513036164844407,
+        "drug_accuracy": 0.8723404255319149,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9393939393939394
+      }
+    ],
+    "by_locale": [
+      {
+        "locale": "en_AU",
+        "clips": 28,
+        "wer": 0.10112359550561797,
+        "drug_accuracy": 1.0,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 1.0
+      },
+      {
+        "locale": "en_GB",
+        "clips": 36,
+        "wer": 0.04807692307692308,
+        "drug_accuracy": 1.0,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 1.0
+      },
+      {
+        "locale": "en_IE",
+        "clips": 32,
+        "wer": 0.08333333333333333,
+        "drug_accuracy": 1.0,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 1.0
+      },
+      {
+        "locale": "en_IN",
+        "clips": 128,
+        "wer": 0.08045212765957446,
+        "drug_accuracy": 0.9112903225806451,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.8333333333333334
+      },
+      {
+        "locale": "en_US",
+        "clips": 156,
+        "wer": 0.09242761692650334,
+        "drug_accuracy": 0.8857142857142857,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9807692307692307
+      },
+      {
+        "locale": "en_ZA",
+        "clips": 20,
+        "wer": 0.09523809523809523,
+        "drug_accuracy": 1.0,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 1.0
+      }
+    ]
+  },
+  {
+    "arm": "keyterm_half",
+    "wer_domain": 0.09293523969722456,
+    "wer_control": 0.02796961325966851,
+    "wer_real": 0.05319148936170213,
+    "entities": {
+      "drug": {
+        "n": 376,
+        "correct": 319,
+        "miss": 49,
+        "cross_confusion": 8,
+        "accuracy": 0.848404255319149,
+        "cross_confusion_rate": 0.02127659574468085
+      },
+      "rx": {
+        "n": 188,
+        "correct": 188,
+        "miss": 0,
+        "cross_confusion": 0,
+        "accuracy": 1.0,
+        "cross_confusion_rate": 0.0
+      },
+      "dose": {
+        "n": 136,
+        "correct": 132,
+        "miss": 4,
+        "cross_confusion": 0,
+        "accuracy": 0.9705882352941176,
+        "cross_confusion_rate": 0.0
+      },
+      "dob": {
+        "n": 132,
+        "correct": 127,
+        "miss": 5,
+        "cross_confusion": 0,
+        "accuracy": 0.9621212121212122,
+        "cross_confusion_rate": 0.0
+      }
+    },
+    "hallucination": {
+      "n_clips": 24,
+      "n_fabricated": 0,
+      "insertion_rate": 0.0,
+      "by_probe": {
+        "babble": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "dial_tone": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "digital_silence": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "dtmf_sequence": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "hold_music": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "line_noise": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "ring_tone": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        },
+        "room_tone": {
+          "n": 3,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        }
+      }
+    },
+    "confusions": [
+      {
+        "expected": "cyclosporine",
+        "heard_as": "cycloserine",
+        "count": 5
+      },
+      {
+        "expected": "prednisolone",
+        "heard_as": "prednisone",
+        "count": 2
+      },
+      {
+        "expected": "amiodarone",
+        "heard_as": "amlodipine",
+        "count": 1
+      }
+    ],
+    "by_condition": [
+      {
+        "condition": "clean_16k",
+        "clips": 100,
+        "wer": 0.08410428931875526,
+        "drug_accuracy": 0.8936170212765957,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9696969696969697
+      },
+      {
+        "condition": "opus_16k_reverb",
+        "clips": 100,
+        "wer": 0.0782169890664424,
+        "drug_accuracy": 0.8936170212765957,
+        "drug_cross_confusion": 0.02127659574468085,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9696969696969697
+      },
+      {
+        "condition": "telephony_8k_ulaw",
+        "clips": 100,
+        "wer": 0.08746846089150546,
+        "drug_accuracy": 0.851063829787234,
+        "drug_cross_confusion": 0.031914893617021274,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9696969696969697
+      },
+      {
+        "condition": "telephony_noisy_10db",
+        "clips": 100,
+        "wer": 0.12195121951219512,
+        "drug_accuracy": 0.7553191489361702,
+        "drug_cross_confusion": 0.031914893617021274,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9393939393939394
+      }
+    ],
+    "by_locale": [
+      {
+        "locale": "en_AU",
+        "clips": 28,
+        "wer": 0.10674157303370786,
+        "drug_accuracy": 0.75,
+        "drug_cross_confusion": 0.17857142857142858,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 1.0
+      },
+      {
+        "locale": "en_GB",
+        "clips": 36,
+        "wer": 0.04807692307692308,
+        "drug_accuracy": 1.0,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 1.0
+      },
+      {
+        "locale": "en_IE",
+        "clips": 32,
+        "wer": 0.10648148148148148,
+        "drug_accuracy": 0.8214285714285714,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 1.0
+      },
+      {
+        "locale": "en_IN",
+        "clips": 128,
+        "wer": 0.0990691489361702,
+        "drug_accuracy": 0.7741935483870968,
+        "drug_cross_confusion": 0.008064516129032258,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.8333333333333334
+      },
+      {
+        "locale": "en_US",
+        "clips": 156,
+        "wer": 0.09187082405345212,
+        "drug_accuracy": 0.8785714285714286,
+        "drug_cross_confusion": 0.014285714285714285,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 0.9807692307692307
+      },
+      {
+        "locale": "en_ZA",
+        "clips": 20,
+        "wer": 0.09523809523809523,
+        "drug_accuracy": 1.0,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": 1.0,
+        "dob_accuracy": 1.0
       }
     ]
   }
