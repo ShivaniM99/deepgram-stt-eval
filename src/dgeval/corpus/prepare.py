@@ -118,6 +118,63 @@ def normalize_rms(x: np.ndarray, target_dbfs: float = TARGET_RMS_DBFS
     }
 
 
+def trim_trailing_burst(x: np.ndarray, sr: int) -> tuple[np.ndarray, dict]:
+    """Remove an isolated burst at the very end -- the stop keypress.
+
+    Unlike the leading keypress, this one is tractable: the speaker is asked to
+    leave a beat of silence before pressing Enter, so a real gap separates the
+    click from the last word. The cut therefore lands in silence rather than
+    being a fixed guess.
+
+    It is adaptive on purpose. A fixed trailing cut would be unsafe here: the
+    end of these utterances is where the prescription number falls, so blindly
+    discarding the last 300 ms risks the final digit -- exactly the data the
+    evaluation is about. If no isolated trailing burst is found, nothing is
+    removed and the QC check flags the clip instead.
+    """
+    db, n = _frames(x, sr)
+    if db.size == 0:
+        return x, {"tail_burst_removed": False}
+
+    noise = float(np.percentile(db, 10))
+    loud = float(np.percentile(db, 90))
+    thresh = max(noise + 12.0, loud - 30.0)
+    runs = _clean_runs(_runs(db > thresh),
+                       min_len=max(1, int(MIN_RUN_MS / FRAME_MS)),
+                       merge_gap=max(1, int(MERGE_GAP_MS / FRAME_MS)))
+    if len(runs) < 2:
+        return x, {"tail_burst_removed": False}
+
+    a, b = runs[-1]
+    prev_end = runs[-2][1]
+    gap_ms = (a - prev_end) * FRAME_MS
+    len_ms = (b - a) * FRAME_MS
+    ends_near_end = (len(db) - b) * FRAME_MS <= 300
+
+    if len_ms <= 400 and gap_ms >= 150 and ends_near_end:
+        cut = int((prev_end + (a - prev_end) / 2))      # mid-gap, in silence
+        return x[: cut * n], {
+            "tail_burst_removed": True,
+            "tail_removed_ms": (len(db) - cut) * FRAME_MS,
+            "gap_before_burst_ms": gap_ms,
+        }
+    return x, {"tail_burst_removed": False}
+
+
+def tail_transient_db(path: Path, window_ms: int = 300) -> float:
+    """How loud the final window is relative to the body. Positive means the
+    clip ends with something louder than the speech -- a stop keypress."""
+    x, sr = sf.read(str(path), dtype="float32", always_2d=False)
+    if x.ndim > 1:
+        x = x.mean(axis=1)
+    k = int(sr * window_ms / 1000)
+    if len(x) <= k:
+        return 0.0
+    tail_peak = 20 * np.log10(float(np.abs(x[-k:]).max()) + 1e-12)
+    body = 20 * np.log10(float(np.percentile(np.abs(x), 95)) + 1e-12)
+    return round(tail_peak - body, 1)
+
+
 def head_transient_db(path: Path, window_ms: int = 200) -> float:
     """How loud the first window_ms is, relative to the body of the clip.
 

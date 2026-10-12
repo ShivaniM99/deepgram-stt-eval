@@ -33,6 +33,7 @@ import soundfile as sf
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from dgeval.config import RECORDINGS
+from dgeval.corpus.prepare import trim_trailing_burst
 from rich.console import Console
 from rich.panel import Panel
 
@@ -70,7 +71,7 @@ def record(device: str, dst: Path, discard_head_ms: int = 700) -> bool:
 
     The first `discard_head_ms` are thrown away, because the keypress that
     starts the recording is captured by the microphone as a sharp transient --
-    on the first pass through this corpus it landed up to 6 dB LOUDER than the
+    on the first pass through this corpus it landed up to 10 dB LOUDER than the
     speech that followed. Detecting and excising it afterwards was tried and
     abandoned: once a transient sits within ~250 ms of speech, no threshold
     separates the two without risking the first phoneme. Discarding a fixed
@@ -84,23 +85,29 @@ def record(device: str, dst: Path, discard_head_ms: int = 700) -> bool:
          "-ac", "1", "-ar", "16000", "-acodec", "pcm_s16le", str(tmp)],
         stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
     )
-    # Hold the speaker off until the keypress window has elapsed.
-    time.sleep(discard_head_ms / 1000.0 + 0.15)
+    # Hold the speaker off until the discard window has certainly elapsed.
+    # The margin covers ffmpeg's audio-device init: if capture starts slightly
+    # after Popen, the discarded window shifts later in wall-clock time, and a
+    # cue shown too early would let a fast speaker land inside it.
+    time.sleep(discard_head_ms / 1000.0 + 0.4)
     console.print("  [bold red]SPEAK NOW[/] — press [bold]Enter[/] when you finish the line")
     try:
         input()
     except (KeyboardInterrupt, EOFError):
         pass
+    err_bytes = b""
     try:
         # 'q' makes ffmpeg finalize the container cleanly; terminate would truncate.
-        proc.communicate(input=b"q", timeout=10)
+        _, err_bytes = proc.communicate(input=b"q", timeout=10)
     except subprocess.TimeoutExpired:
         proc.terminate()
-        proc.wait(timeout=5)
+        try:
+            _, err_bytes = proc.communicate(timeout=5)
+        except subprocess.TimeoutExpired:
+            proc.kill()
 
     if not tmp.exists() or tmp.stat().st_size < 2000:
-        err = (proc.stderr.read().decode(errors="replace")
-               if proc.stderr and not proc.stderr.closed else "")
+        err = (err_bytes or b"").decode(errors="replace")
         console.print(f"  [red]nothing recorded.[/] {err.strip()[:200]}")
         console.print("  [dim]if this is a permissions problem, allow microphone "
                       "access for your terminal in System Settings > Privacy & "
@@ -115,6 +122,13 @@ def record(device: str, dst: Path, discard_head_ms: int = 700) -> bool:
     k = int(sr * discard_head_ms / 1000.0)
     if len(x) > k + sr // 4:
         x = x[k:]
+    # The stop keypress is only sometimes captured -- ffmpeg often finalizes
+    # before it lands. Remove it when it IS there, adaptively, because the end
+    # of these utterances carries the prescription number.
+    x, tinfo = trim_trailing_burst(x, sr)
+    if tinfo.get("tail_burst_removed"):
+        console.print(f"  [dim]removed a trailing click "
+                      f"({tinfo['tail_removed_ms']} ms)[/]")
     sf.write(str(dst), np.clip(x, -1.0, 1.0), sr, subtype="PCM_16")
     tmp.unlink(missing_ok=True)
     return True
