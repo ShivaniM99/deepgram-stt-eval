@@ -85,3 +85,24 @@ class BudgetGuard:
 
 class BudgetExceeded(RuntimeError):
     pass
+
+
+# Extensions accepted for tier C source recordings.
+MEDIA_SUFFIXES = {".wav", ".m4a", ".mp3", ".flac"}
+
+
+def tier_c_media() -> list:
+    """Tier C source clips, excluding the recorder's in-progress temp files.
+
+    The recorder writes `<id>.rec.wav` while capturing and renames it on
+    success. A plain `c*.wav` glob picks that up mid-write and fails to parse,
+    so temp files are filtered by their dotted stem rather than by timing.
+    """
+    out = []
+    for p in sorted(RECORDINGS.iterdir()):
+        if not p.is_file() or p.suffix.lower() not in MEDIA_SUFFIXES:
+            continue
+        if "." in p.stem:          # c16.rec -> temp, not a finished clip
+            continue
+        out.append(p)
+    return out

@@ -27,7 +27,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from dgeval.config import AUDIO, MANIFEST, RECORDINGS
+from dgeval.config import AUDIO, MANIFEST, RECORDINGS, tier_c_media
 from dgeval.corpus import degrade, external, nonspeech, prepare, tts
 from dgeval.corpus.generate import coverage, generate
 from rich.console import Console
@@ -96,8 +96,7 @@ def build_tier_c(conditions: list[str]) -> list[dict]:
     Absent a .txt the clip is skipped with a warning -- an unlabelled clip
     cannot be scored and silently including it would corrupt the aggregate.
     """
-    media = [p for p in sorted(RECORDINGS.iterdir())
-             if p.suffix.lower() in {".wav", ".m4a", ".mp3", ".flac"}]
+    media = tier_c_media()
     if not media:
         console.print("[yellow]Tier C skipped[/] no recordings in data/recordings/ "
                       "(see data/recordings/README.md for the script to read)")

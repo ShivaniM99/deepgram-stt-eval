@@ -66,17 +66,32 @@ def list_devices() -> None:
             console.print("  " + line.split("] ", 1)[-1])
 
 
-def record(device: str, dst: Path, discard_head_ms: int = 700) -> bool:
-    """Record until the user presses Enter. Returns False if nothing captured.
+def record(device: str, dst: Path, discard_head_ms: int = 2000,
+           countdown_s: float = 4.0) -> bool:
+    """Record with a counted-in start. Returns False if nothing was captured.
 
-    The first `discard_head_ms` are thrown away, because the keypress that
-    starts the recording is captured by the microphone as a sharp transient --
-    on the first pass through this corpus it landed up to 10 dB LOUDER than the
-    speech that followed. Detecting and excising it afterwards was tried and
+    Why a countdown rather than a short fixed discard
+    -------------------------------------------------
+    The keypress that starts the recording is picked up by the microphone as a
+    sharp transient -- on the first pass through this corpus it landed up to
+    10 dB LOUDER than the speech. Detecting it afterwards was tried and
     abandoned: once a transient sits within ~250 ms of speech, no threshold
-    separates the two without risking the first phoneme. Discarding a fixed
-    window at capture, with an on-screen cue so the speaker waits for it,
-    removes the artifact instead of guessing at it.
+    separates them without risking the first phoneme.
+
+    The second attempt discarded a fixed 700 ms from the start of capture and
+    showed the cue 1.1 s in. That ALSO failed, for a subtler reason: ffmpeg's
+    audio device needs time to initialize, and over a Continuity iPhone link
+    that can exceed a second. Capture therefore begins late, the discarded
+    window slides later in wall-clock time with it, and the cut lands inside
+    the first word instead of inside the keypress. Five clips came back 1-2.6 s
+    short with speech starting at sample zero.
+
+    The fix removes the dependency on init latency rather than estimating it.
+    The countdown (default 4 s) is made comfortably LONGER than the discard
+    (default 2 s), so for any initialization delay between 0 and 2 s the
+    discarded window is guaranteed to contain only the keypress and silence,
+    and the speaker's first word is guaranteed to survive. The speaker also
+    gets an unambiguous cue to speak against.
     """
     tmp = dst.with_suffix(".rec.wav")
     proc = subprocess.Popen(
@@ -85,19 +100,24 @@ def record(device: str, dst: Path, discard_head_ms: int = 700) -> bool:
          "-ac", "1", "-ar", "16000", "-acodec", "pcm_s16le", str(tmp)],
         stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
     )
-    # Hold the speaker off until the discard window has certainly elapsed.
-    # The margin covers ffmpeg's audio-device init: if capture starts slightly
-    # after Popen, the discarded window shifts later in wall-clock time, and a
-    # cue shown too early would let a fast speaker land inside it.
-    time.sleep(discard_head_ms / 1000.0 + 0.4)
-    console.print("  [bold red]SPEAK NOW[/] — press [bold]Enter[/] when you finish the line")
+
+    # Counted-in start. Keep quiet through this; it is all discarded.
+    whole = int(countdown_s)
+    for k in range(whole, 0, -1):
+        console.print(f"  [dim]{k}...[/]")
+        time.sleep(1.0)
+    time.sleep(max(0.0, countdown_s - whole))
+    console.print("  [bold red]SPEAK NOW[/] — press [bold]Enter[/] "
+                  "a second after your last word")
+
     try:
         input()
     except (KeyboardInterrupt, EOFError):
         pass
+
     err_bytes = b""
     try:
-        # 'q' makes ffmpeg finalize the container cleanly; terminate would truncate.
+        # 'q' makes ffmpeg finalize the container cleanly; terminate truncates.
         _, err_bytes = proc.communicate(input=b"q", timeout=10)
     except subprocess.TimeoutExpired:
         proc.terminate()
@@ -115,20 +135,25 @@ def record(device: str, dst: Path, discard_head_ms: int = 700) -> bool:
         tmp.unlink(missing_ok=True)
         return False
 
-    # Drop the keypress window.
     x, sr = sf.read(str(tmp), dtype="float32", always_2d=False)
     if x.ndim > 1:
         x = x.mean(axis=1)
+
+    # Drop the counted-in head. Safe for any init delay below discard_head_ms.
     k = int(sr * discard_head_ms / 1000.0)
-    if len(x) > k + sr // 4:
+    if len(x) > k + sr // 2:
         x = x[k:]
-    # The stop keypress is only sometimes captured -- ffmpeg often finalizes
-    # before it lands. Remove it when it IS there, adaptively, because the end
-    # of these utterances carries the prescription number.
+    else:
+        console.print("  [yellow]clip shorter than the discard window; "
+                      "keeping it whole[/]")
+
+    # The stop keypress is only sometimes captured. Remove it when present,
+    # adaptively, because the end of these utterances carries the Rx number.
     x, tinfo = trim_trailing_burst(x, sr)
     if tinfo.get("tail_burst_removed"):
         console.print(f"  [dim]removed a trailing click "
                       f"({tinfo['tail_removed_ms']} ms)[/]")
+
     sf.write(str(dst), np.clip(x, -1.0, 1.0), sr, subtype="PCM_16")
     tmp.unlink(missing_ok=True)
     return True
@@ -151,8 +176,11 @@ def main() -> None:
     ap.add_argument("--only", nargs="*", default=None, help="e.g. --only c03 c07")
     ap.add_argument("--force", action="store_true", help="re-record existing clips")
     ap.add_argument("--list-devices", action="store_true")
-    ap.add_argument("--discard-head-ms", type=int, default=700,
+    ap.add_argument("--discard-head-ms", type=int, default=2000,
                     help="audio thrown away at the start to drop the keypress")
+    ap.add_argument("--countdown", type=float, default=4.0,
+                    help="count-in seconds before the speak cue; must exceed "
+                         "--discard-head-ms so device init cannot clip speech")
     args = ap.parse_args()
 
     if args.list_devices:
@@ -179,10 +207,12 @@ def main() -> None:
         return
 
     console.print(Panel(
-        "Read each line [bold]naturally[/]. Do not over-enunciate the drug names —\n"
-        "mumbled is realistic and useful. Read digits [bold]one at a time[/]\n"
-        "(\"six two six\", never \"six hundred twenty-six\"). Quiet room,\n"
-        "phone held normally, no headset.",
+        "Each line is counted in: [bold]3... 2... 1...[/] then [bold red]SPEAK NOW[/].\n"
+        "Stay quiet during the count — all of it is discarded.\n\n"
+        "Read [bold]naturally[/]. Do not over-enunciate the drug names; mumbled is\n"
+        "realistic and useful. Read digits [bold]one at a time[/] (\"six two six\",\n"
+        "never \"six hundred twenty-six\"). Leave about a second of silence after\n"
+        "your last word before pressing Enter.",
         title=f"tier C — {len(todo)} to record", border_style="cyan"))
 
     for n, (cid, text, wav) in enumerate(todo, 1):
@@ -198,7 +228,8 @@ def main() -> None:
             if input().strip().lower() == "s":
                 console.print("  [yellow]skipped[/]")
                 break
-            if not record(args.device, wav, args.discard_head_ms):
+            if not record(args.device, wav, args.discard_head_ms,
+                          args.countdown):
                 break
             console.print(f"  captured {duration(wav):.1f}s — playing back")
             subprocess.run(["afplay", str(wav)], check=False)

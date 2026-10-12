@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import numpy as np
 import soundfile as sf
 
-from dgeval.config import RECORDINGS
+from dgeval.config import RECORDINGS, tier_c_media
 from dgeval.corpus.prepare import head_transient_db, tail_transient_db
 from rich.console import Console
 from rich.table import Table
@@ -45,7 +45,7 @@ def snr_db(x: np.ndarray, sr: int) -> float:
 
 
 def main() -> None:
-    wavs = sorted(RECORDINGS.glob("c*.wav"))
+    wavs = tier_c_media()
     labels = sorted(RECORDINGS.glob("c*.txt"))
     if not wavs:
         raise SystemExit(f"no recordings in {RECORDINGS}; run `make record`")
