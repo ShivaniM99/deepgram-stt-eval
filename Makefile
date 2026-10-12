@@ -1,4 +1,4 @@
-.PHONY: help setup test corpus tier-c eval keyterm sweep report all clean cache-stats
+.PHONY: help setup test corpus tier-c record eval keyterm sweep report all clean cache-stats
 
 help:
 	@grep -E '^[a-z-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "};{printf "  \033[36m%-12s\033[0m %s\n",$$1,$$2}'
@@ -15,6 +15,9 @@ corpus:  ## build the evaluation corpus (no API key needed)
 
 tier-c:  ## generate the tier C recording script + label files
 	.venv/bin/python scripts/make_tier_c_script.py
+
+record:  ## guided tier C recording, straight to the correct filenames
+	.venv/bin/python scripts/record_tier_c.py
 
 eval:  ## baseline transcription + scoring
 	.venv/bin/python scripts/02_run_eval.py --arms baseline
