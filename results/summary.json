@@ -1,0 +1,64 @@
+[
+  {
+    "arm": "baseline",
+    "wer_domain": 0.0,
+    "wer_control": 0.0,
+    "wer_real": 0.05555555555555555,
+    "entities": {
+      "drug": {
+        "n": 2,
+        "correct": 2,
+        "miss": 0,
+        "cross_confusion": 0,
+        "accuracy": 1.0,
+        "cross_confusion_rate": 0.0
+      }
+    },
+    "hallucination": {
+      "n_clips": 2,
+      "n_fabricated": 0,
+      "insertion_rate": 0.0,
+      "by_probe": {
+        "digital_silence": {
+          "n": 2,
+          "fabricated": 0,
+          "rate": 0.0,
+          "words_total": 0,
+          "examples": []
+        }
+      }
+    },
+    "confusions": [],
+    "by_condition": [
+      {
+        "condition": "clean_16k",
+        "clips": 1,
+        "wer": 0.0,
+        "drug_accuracy": 1.0,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": null,
+        "dob_accuracy": null
+      },
+      {
+        "condition": "telephony_8k_ulaw",
+        "clips": 1,
+        "wer": 0.0,
+        "drug_accuracy": 1.0,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": null,
+        "dob_accuracy": null
+      }
+    ],
+    "by_locale": [
+      {
+        "locale": "en_GB",
+        "clips": 2,
+        "wer": 0.0,
+        "drug_accuracy": 1.0,
+        "drug_cross_confusion": 0.0,
+        "rx_accuracy": null,
+        "dob_accuracy": null
+      }
+    ]
+  }
+]

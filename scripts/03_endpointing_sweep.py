@@ -66,29 +66,38 @@ async def amain(args) -> None:
     base = StreamConfig(model=args.model, utterance_end_ms=args.utterance_end_ms)
     points, raw = await run_sweep(paths, args.values, base, progress_cb=cb)
 
-    t = Table(title="endpointing sweep: latency vs truncation", show_edge=False)
-    for c in ("endpointing", "n", "endpoint p50", "p95", "p99",
-              "ttfi p50", "truncated", "empty"):
+    t = Table(title="endpointing sweep: finalization delay vs fragmentation",
+              show_edge=False)
+    for c in ("endpointing", "clips", "final p50", "p95", "p99", "ttfi p50",
+              "fragmented", "segs/clip", "empty"):
         t.add_column(c, justify="right")
     for p in points:
         f = lambda v: "-" if v is None else f"{v:.0f}"
         t.add_row(f"{p.endpointing_ms} ms", str(p.n_clips),
-                  f(p.endpoint_p50), f(p.endpoint_p95), f(p.endpoint_p99),
-                  f(p.ttfi_p50), f"{p.truncation_rate:.1%}", f"{p.empty_rate:.1%}")
+                  f(p.final_p50), f(p.final_p95), f(p.final_p99), f(p.ttfi_p50),
+                  f"{p.fragmentation_rate:.0%}", f"{p.mean_segments:.1f}",
+                  f"{p.empty_rate:.0%}")
     console.print(t)
+    console.print("[dim]finalization delay = wall clock the final arrived minus "
+                  "the audio timestamp of its last word; close-forced finals "
+                  "excluded. See src/dgeval/asr/stream.py[/]")
 
-    rec = recommend(points, max_truncation=args.max_truncation)
+    rec = recommend(points, max_fragmentation=args.max_fragmentation)
     console.print(f"\n[bold]recommendation:[/] {rec}")
     console.print("[dim]note: the fastest setting is deliberately NOT the "
-                  "recommendation -- see experiments/endpointing.py[/]")
+                  "recommendation. Aggressive endpointing splits one request "
+                  "across two finals, and the second piece carries the Rx "
+                  "number -- see experiments/endpointing.py[/]")
 
     (RESULTS / "endpointing.json").write_text(json.dumps({
         "baseline_rtt": rtt,
         "condition": args.condition,
         "points": [p.as_row() for p in points],
         "recommendation": rec,
-        "per_clip": {k: [{"uid": r.uid, "endpoint_ms": r.endpoint_ms,
-                          "ttfi_ms": r.ttfi_ms, "truncated": r.truncated,
+        "per_clip": {k: [{"uid": r.uid, "ttfi_ms": r.ttfi_ms,
+                          "n_segments": r.n_segments,
+                          "fragmented": r.fragmented,
+                          "finalization_delays_ms": r.finalization_delays_ms,
                           "transcript": r.transcript} for r in v]
                      for k, v in raw.items()},
     }, indent=2))
@@ -101,7 +110,8 @@ def main() -> None:
     ap.add_argument("--values", type=int, nargs="+", default=DEFAULT_SWEEP)
     ap.add_argument("--condition", default="telephony_8k_ulaw")
     ap.add_argument("--utterance-end-ms", type=int, default=1000)
-    ap.add_argument("--max-truncation", type=float, default=0.02)
+    ap.add_argument("--max-fragmentation", type=float, default=0.10,
+                    help="share of utterances allowed to arrive in >1 piece")
     ap.add_argument("--model", default="nova-3")
     args = ap.parse_args()
     if not has_api_key():

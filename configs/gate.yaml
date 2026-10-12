@@ -100,23 +100,33 @@ thresholds:
       ordinary speech worse. More than 2 points of WER regression on the
       control means the boost is being paid for by every other caller.
 
-  endpoint_latency_p95_ms:
-    max: 1200
-    scope: {metric: endpoint_ms}
+  finalization_delay_p95_ms:
+    max: 2500
+    scope: {metric: finalization_delay}
     severity: warn
     why: >
-      Caller stops speaking to final transcript available, 95th percentile.
-      Past roughly 1.2 s of dead air callers start repeating themselves, which
-      corrupts the next turn. p95 not mean, because the tail is what generates
-      complaints. CLIENT-OBSERVED from the test machine and therefore inclusive
-      of network round trip -- see the baseline RTT reported alongside.
+      Caller's last word to the text existing, 95th percentile, measured as
+      wall clock on arrival minus the audio timestamp of that word. Finals
+      forced by the harness closing the stream are excluded, since their
+      timing reflects the harness hanging up rather than the endpointer. p95
+      not mean, because the tail is what generates complaints. CLIENT-OBSERVED
+      and therefore inclusive of network round trip -- see the baseline RTT
+      reported alongside. Set at 2.5 s rather than something tighter because
+      the measured floor at a non-fragmenting setting is around 2.3 s; a
+      tighter bound is only reachable by splitting utterances, which the next
+      threshold forbids.
 
-  endpoint_truncation_rate:
-    max: 0.02
-    scope: {metric: truncated}
+  utterance_fragmentation_rate:
+    max: 0.10
+    scope: {metric: fragmentation}
     severity: blocker
     why: >
-      The counterweight to the latency threshold. Endpointing can always be
-      made faster by cutting the caller off sooner, which silently drops the
-      end of utterances -- and the end is where the Rx number usually is.
-      Tuning latency without this threshold present optimizes toward data loss.
+      Share of utterances arriving as more than one final segment. This is the
+      counterweight to the latency threshold and the reason it is loose.
+      Aggressive endpointing does not truncate speech, it SPLITS it: at
+      endpointing=10 ms a refill request arrives as "I'd like a refill on
+      hydralazine fifty milligrams" and then, separately, the prescription
+      number. Any component acting on the first final holds a drug name with
+      no prescription attached -- a failure that looks like a complete,
+      well-formed request. Blocking, because tuning latency without it
+      optimizes directly toward splitting requests in half.

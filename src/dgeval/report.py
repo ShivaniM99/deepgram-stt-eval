@@ -46,8 +46,8 @@ def gate_measurements(data: dict[str, Any]) -> dict[str, float | None]:
     m: dict[str, float | None] = dict.fromkeys(
         ["drug_cross_confusion_rate", "drug_accuracy", "rx_exact_match",
          "hallucination_insertion_rate", "dob_accuracy", "wer_domain",
-         "wer_control_regression", "endpoint_latency_p95_ms",
-         "endpoint_truncation_rate"], None)
+         "wer_control_regression", "finalization_delay_p95_ms",
+         "utterance_fragmentation_rate"], None)
 
     if best:
         ent = best.get("entities") or {}
@@ -76,8 +76,8 @@ def gate_measurements(data: dict[str, Any]) -> dict[str, float | None]:
         rec_ms = (ep.get("recommendation") or {}).get("recommended_endpointing_ms")
         pt = next((p for p in ep["points"] if p["endpointing_ms"] == rec_ms),
                   None) or ep["points"][0]
-        m["endpoint_latency_p95_ms"] = pt.get("endpoint_p95")
-        m["endpoint_truncation_rate"] = pt.get("truncation_rate")
+        m["finalization_delay_p95_ms"] = pt.get("final_p95")
+        m["utterance_fragmentation_rate"] = pt.get("fragmentation_rate")
 
     return m
 
@@ -223,32 +223,35 @@ def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> 
     # --- endpointing -------------------------------------------------------
     ep = data.get("endpointing")
     if ep and ep.get("points"):
-        w("## Endpointing: latency against truncation\n")
+        w("## Endpointing: finalization delay against fragmentation\n")
         rtt = ep.get("baseline_rtt") or {}
         if rtt:
             w(f"Network floor from the test machine: p50 "
               f"{_num(rtt.get('rtt_p50_ms'))} ms, min {_num(rtt.get('rtt_min_ms'))} ms. "
               f"All latencies below are client-observed and include this round "
               f"trip in both directions; server-side figures would be lower.\n")
-        w("| endpointing | n | endpoint p50 | p95 | p99 | ttfi p50 | truncated | empty |")
+        w("| endpointing | clips | final p50 | p95 | p99 | ttfi p50 | fragmented | segs/clip |")
         w("|---|---|---|---|---|---|---|---|")
         for p in ep["points"]:
             w(f"| {p['endpointing_ms']} ms | {p['n_clips']} | "
-              f"{_num(p['endpoint_p50'])} | {_num(p['endpoint_p95'])} | "
-              f"{_num(p['endpoint_p99'])} | {_num(p['ttfi_p50'])} | "
-              f"{_pct(p['truncation_rate'], 1)} | {_pct(p['empty_rate'], 1)} |")
+              f"{_num(p['final_p50'])} | {_num(p['final_p95'])} | "
+              f"{_num(p['final_p99'])} | {_num(p['ttfi_p50'])} | "
+              f"{_pct(p['fragmentation_rate'], 0)} | {p['mean_segments']:.1f} |")
         rec = ep.get("recommendation") or {}
         w(f"\n**Recommended: `endpointing={rec.get('recommended_endpointing_ms')}`** "
           f"— {rec.get('reason')}\n")
         if rec.get("rejected"):
-            w("Faster settings were rejected for losing audio:\n")
+            w("Faster settings were rejected for splitting utterances:\n")
             for r in rec["rejected"]:
                 w(f"- `{r['endpointing_ms']} ms`: p95 "
-                  f"{_num(r['endpoint_p95_ms'])} ms but "
-                  f"{_pct(r['truncation_rate'], 1)} of utterances truncated")
-            w("\nTruncation matters disproportionately here because the Rx "
-              "number falls at the end of the utterance — the exact region an "
-              "early endpoint discards.\n")
+                  f"{_num(r['final_p95_ms'])} ms but "
+                  f"{_pct(r['fragmentation_rate'], 0)} of utterances arrived "
+                  f"in more than one piece")
+            w("\nFragmentation matters disproportionately here because the Rx "
+              "number falls at the end of the utterance. A component acting on "
+              "the first final of a split request holds a drug name with no "
+              "prescription attached — which looks like a complete, "
+              "well-formed request rather than an error.\n")
 
     # --- cost --------------------------------------------------------------
     w("## Cost model\n")
@@ -293,7 +296,9 @@ def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> 
       "full rollout.\n")
     w("- **Latency is client-observed** from one machine on one connection, "
       "inclusive of network round trip. It bounds what a user in this network "
-      "position experiences; it does not measure Deepgram's processing time.\n")
+      "position experiences; it does not measure Deepgram's processing time. "
+      "Three earlier definitions of this metric were discarded as meaningless "
+      "against the live API; see `src/dgeval/asr/stream.py`.\n")
     w("- **Single-turn only.** No barge-in, no interruption handling, no "
       "multi-turn state, no tool calling. The Voice Agent API is not evaluated "
       "in this phase.\n")

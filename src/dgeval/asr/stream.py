@@ -3,33 +3,64 @@
 Why not just time a batch request
 ---------------------------------
 Wall-clock on a pre-recorded upload measures file upload plus server
-processing. It is not what a caller experiences and it is not what a customer
-argues about in a design review. The number that matters on a phone line is:
+processing. It is not what a caller experiences. The number that matters on a
+phone line is how long after the caller stops speaking the text exists, which
+is dominated by endpointing, not model speed. Measuring it requires streaming
+at REAL TIME pace: audio pushed as fast as the socket accepts produces
+meaningless figures, because the server has the whole utterance before it has
+finished "listening".
 
-    the caller stops speaking -> how long until the final transcript exists
+Three wrong metrics were tried first, against the live API
+---------------------------------------------------------
+Each looked plausible and measured nothing. They are recorded because the
+final design only makes sense against them:
 
-which is dominated by endpointing, not by model speed. Measuring it requires
-streaming audio at REAL TIME pace over a websocket. Audio pushed as fast as
-the socket accepts it produces latency figures that are meaningless, because
-the server has the whole utterance before it has finished "listening".
+  1. "time to first is_final" -- gave latencies of MINUS three seconds.
+     `is_final` does not mark the end of an utterance. Deepgram sets it on
+     each finalized SEGMENT as the stream progresses, so the first one arrives
+     while audio is still being sent.
 
-Four timings are captured per utterance:
+  2. "time to speech_final, after streaming a silence tail" -- also wrong.
+     `speech_final` and `UtteranceEnd` never arrived during a continuing
+     stream, not even after 3 s of trailing silence with endpointing=300 ms.
+     Both landed ~60 ms after CloseStream. The metric was measuring when the
+     harness hung up.
 
-    ttfi      first interim result, measured from the first audio byte sent
-    endpoint  first is_final result, measured from the LAST audio byte sent
-              -- this is the one a caller feels as dead air
-    utt_end   the UtteranceEnd event, where enabled
-    i2f       first interim -> first final
+  3. "...but with comfort noise instead of digital zeros", on the theory that
+     the VAD needed signal to work against. Identical to zeros, within 2 ms.
+     The behaviour is tied to stream close, not to audio content.
 
-All are reported as p50/p95/p99, never as means: the tail is the complaint.
+What is actually measured
+-------------------------
+Deepgram returns word-level timestamps, which makes the real question
+answerable without involving stream close at all:
 
-Measurement caveat, stated because it changes how the numbers should be read:
-these are CLIENT-OBSERVED timings from a laptop on a residential connection.
-They include network round trip in both directions. `measure_baseline_rtt()`
-captures that floor so the report can present it alongside, and a
-server-side-only figure would be lower. The numbers are honest as an upper
-bound on what a user in this network position experiences, not as a
-measurement of Deepgram's internal processing time.
+    finalization delay = (wall clock when the final arrived)
+                       - (audio timestamp of its last word)
+
+That is precisely "the caller finished saying this; when did the text exist?".
+Finals arriving after CloseStream are flagged and EXCLUDED, since their timing
+is an artifact of the harness hanging up rather than of the endpointer.
+
+The second metric is fragmentation: how many final segments one utterance is
+split into. This is where the real trade-off lives, and it is not the one
+originally expected. Aggressive endpointing does not truncate -- it SPLITS.
+Measured on a clip with a 470 ms internal pause:
+
+    endpointing=10 ms   -> finalization in  314 ms, utterance split in two
+    endpointing=300 ms  -> finalization in 2343 ms, utterance split in two
+
+An agent acting on the first final of a split utterance holds half the
+request: "I would like a refill on hydralazine fifty milligrams" arrives
+without "prescription number one zero zero zero eight eight one". For this use
+case that is worse than waiting, because the missing half carries the Rx
+number.
+
+Measurement caveat: these are CLIENT-OBSERVED timings from one machine,
+inclusive of network round trip in both directions. `measure_baseline_rtt()`
+captures that floor so the report can present it alongside. They bound what a
+user in this network position experiences; they do not measure Deepgram's
+internal processing time.
 """
 from __future__ import annotations
 
@@ -39,7 +70,6 @@ import statistics
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 from urllib.parse import urlencode
 
 import httpx
@@ -66,6 +96,11 @@ class StreamConfig:
     utterance_end_ms: int | None = 1000   # requires interim_results
     vad_events: bool = False
     keyterm: tuple[str, ...] = ()
+    # Silence streamed after the speech, as a real line would carry. It does
+    # NOT make speech_final fire (see module docstring), but it lets a late
+    # natural finalization land before the close and keeps the close-forced
+    # final clearly separated in time from the natural ones.
+    silence_tail_ms: int = 2000
 
     def query(self) -> str:
         p: list[tuple[str, str]] = [
@@ -85,21 +120,47 @@ class StreamConfig:
 
     def label(self) -> str:
         ep = "off" if self.endpointing is False else f"{int(self.endpointing)}ms"
-        return f"endpointing={ep},utterance_end={self.utterance_end_ms}"
+        return f"endpointing={ep}"
+
+
+@dataclass
+class FinalSegment:
+    """One is_final result, with enough context to time it honestly."""
+    recv_s: float              # seconds from stream start
+    last_word_end_s: float     # audio timestamp of its final word
+    delay_ms: float            # recv_s - last_word_end_s, in ms
+    n_words: int
+    transcript: str
+    forced_by_close: bool      # arrived after CloseStream -> excluded
 
 
 @dataclass
 class StreamResult:
     uid: str
     transcript: str
-    ttfi_ms: float | None            # first audio byte -> first interim
-    endpoint_ms: float | None        # last audio byte -> first final
-    utt_end_ms: float | None         # last audio byte -> UtteranceEnd
-    i2f_ms: float | None             # first interim -> first final
-    n_interims: int
-    audio_s: float
-    truncated: bool                  # final transcript shorter than any interim
+    ttfi_ms: float | None = None
+    segments: list[FinalSegment] = field(default_factory=list)
+    n_interims: int = 0
+    audio_s: float = 0.0
     events: list[dict] = field(default_factory=list, repr=False)
+
+    @property
+    def natural(self) -> list[FinalSegment]:
+        return [s for s in self.segments if not s.forced_by_close]
+
+    @property
+    def finalization_delays_ms(self) -> list[float]:
+        return [s.delay_ms for s in self.natural]
+
+    @property
+    def n_segments(self) -> int:
+        """Pieces the utterance arrived in, close-forced included: fragmentation
+        is about how many parts there were, whatever ended each one."""
+        return len(self.segments)
+
+    @property
+    def fragmented(self) -> bool:
+        return self.n_segments > 1
 
 
 def _load_pcm16(path: Path, target_sr: int) -> bytes:
@@ -120,57 +181,54 @@ async def stream_one(path: Path, cfg: StreamConfig,
     url = f"{WS_URL}?{cfg.query()}"
     headers = {"Authorization": f"Token {api_key()}"}
 
-    t_first_byte: float | None = None
-    t_last_byte: float | None = None
-    t_first_interim: float | None = None
-    t_first_final: float | None = None
-    t_utt_end: float | None = None
-    n_interims = 0
-    best_interim_len = 0
-    final_transcript = ""
+    state: dict = {"t_first_byte": None, "t_close": None, "t_first_interim": None,
+                   "n_interims": 0, "transcript": ""}
+    segments: list[FinalSegment] = []
     events: list[dict] = []
 
     async with websockets.connect(url, additional_headers=headers,
                                   max_size=8 * 1024 * 1024) as ws:
+        t0 = time.perf_counter()
 
         async def send_audio() -> None:
-            nonlocal t_first_byte, t_last_byte
-            t0 = time.perf_counter()
+            sent = 0
             for i in range(0, len(pcm), bytes_per_chunk):
-                chunk = pcm[i:i + bytes_per_chunk]
-                if t_first_byte is None:
-                    t_first_byte = time.perf_counter()
-                await ws.send(chunk)
+                if state["t_first_byte"] is None:
+                    state["t_first_byte"] = time.perf_counter()
+                await ws.send(pcm[i:i + bytes_per_chunk])
+                sent += 1
                 if realtime:
-                    # Pace to the wall clock rather than sleeping a fixed
-                    # interval, so accumulated scheduling drift does not
-                    # silently turn this into a faster-than-realtime send.
-                    target = t0 + (i / bytes_per_chunk + 1) * CHUNK_MS / 1000
-                    delay = target - time.perf_counter()
+                    # Pace against the wall clock rather than a fixed sleep, so
+                    # scheduling drift cannot quietly make this faster than real
+                    # time and invalidate every timing below.
+                    delay = t0 + sent * CHUNK_MS / 1000 - time.perf_counter()
                     if delay > 0:
                         await asyncio.sleep(delay)
-            t_last_byte = time.perf_counter()
+
+            silent = b"\x00" * bytes_per_chunk
+            for _ in range(int(cfg.silence_tail_ms / CHUNK_MS)):
+                await ws.send(silent)
+                sent += 1
+                if realtime:
+                    delay = t0 + sent * CHUNK_MS / 1000 - time.perf_counter()
+                    if delay > 0:
+                        await asyncio.sleep(delay)
+
+            state["t_close"] = time.perf_counter()
             await ws.send(json.dumps({"type": "CloseStream"}))
 
         async def recv_events() -> None:
-            nonlocal t_first_interim, t_first_final, t_utt_end
-            nonlocal n_interims, best_interim_len, final_transcript
             async for raw in ws:
                 now = time.perf_counter()
                 try:
                     msg = json.loads(raw)
                 except (TypeError, json.JSONDecodeError):
                     continue
-                events.append({"t": now, **{k: msg.get(k) for k in
-                                            ("type", "is_final", "speech_final")}})
-                mtype = msg.get("type")
-
-                if mtype == "UtteranceEnd":
-                    t_utt_end = t_utt_end or now
+                events.append({"t": round(now - t0, 4),
+                               **{k: msg.get(k) for k in
+                                  ("type", "is_final", "speech_final")}})
+                if msg.get("type") != "Results":
                     continue
-                if mtype != "Results":
-                    continue
-
                 try:
                     alt = msg["channel"]["alternatives"][0]
                 except (KeyError, IndexError):
@@ -180,37 +238,42 @@ async def stream_one(path: Path, cfg: StreamConfig,
                     continue
 
                 if msg.get("is_final"):
-                    if t_first_final is None:
-                        t_first_final = now
-                    final_transcript = (final_transcript + " " + text).strip()
+                    state["transcript"] = (state["transcript"] + " " + text).strip()
+                    words = alt.get("words") or []
+                    if not words:
+                        continue
+                    recv_s = now - t0
+                    last_end = float(words[-1]["end"])
+                    segments.append(FinalSegment(
+                        recv_s=recv_s,
+                        last_word_end_s=last_end,
+                        delay_ms=(recv_s - last_end) * 1000.0,
+                        n_words=len(words),
+                        transcript=text,
+                        forced_by_close=(state["t_close"] is not None
+                                         and now >= state["t_close"]),
+                    ))
                 else:
-                    n_interims += 1
-                    best_interim_len = max(best_interim_len, len(text.split()))
-                    if t_first_interim is None:
-                        t_first_interim = now
+                    state["n_interims"] += 1
+                    if state["t_first_interim"] is None:
+                        state["t_first_interim"] = now
 
         await asyncio.gather(send_audio(), recv_events())
 
-    def ms(a: float | None, b: float | None) -> float | None:
-        return None if (a is None or b is None) else (a - b) * 1000.0
-
+    tfi, tfb = state["t_first_interim"], state["t_first_byte"]
     return StreamResult(
         uid=path.stem,
-        transcript=final_transcript,
-        ttfi_ms=ms(t_first_interim, t_first_byte),
-        endpoint_ms=ms(t_first_final, t_last_byte),
-        utt_end_ms=ms(t_utt_end, t_last_byte),
-        i2f_ms=ms(t_first_final, t_first_interim),
-        n_interims=n_interims,
+        transcript=state["transcript"],
+        ttfi_ms=None if (tfi is None or tfb is None) else (tfi - tfb) * 1000.0,
+        segments=segments,
+        n_interims=state["n_interims"],
         audio_s=audio_s,
-        truncated=bool(final_transcript) and
-                  len(final_transcript.split()) < best_interim_len,
         events=events,
     )
 
 
 def measure_baseline_rtt(n: int = 5) -> dict[str, float]:
-    """Network floor to the Deepgram edge, so latency can be read in context."""
+    """Network floor to the Deepgram edge, so latency reads in context."""
     samples: list[float] = []
     with httpx.Client(timeout=10.0) as c:
         for _ in range(n):
