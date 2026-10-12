@@ -175,6 +175,51 @@ def tail_transient_db(path: Path, window_ms: int = 300) -> float:
     return round(tail_peak - body, 1)
 
 
+def dropouts_in_speech(path: Path, min_ms: float = 20.0) -> dict:
+    """Count digital-silence gaps that interrupt speech.
+
+    A wireless capture path can drop audio: recording this corpus over a
+    Continuity iPhone microphone produced runs of exact zeros, periodic at
+    roughly 450 ms, some of them landing mid-word. A gap like that causes a
+    recognition error that belongs to the CAPTURE, not to the recognizer --
+    precisely the kind of false error that makes a vendor look worse than it is
+    and corrupts the conclusion. A clip is only damaged when the gap has speech
+    on both sides; gaps in silence are harmless and are reported separately.
+    """
+    x, sr = sf.read(str(path), dtype="float32", always_2d=False)
+    if x.ndim > 1:
+        x = x.mean(axis=1)
+    db, n = _frames(x, sr)
+    if db.size == 0:
+        return {"in_speech": 0, "in_silence": 0, "longest_ms": 0.0}
+
+    finite = db[db > -200]
+    noise = float(np.percentile(finite, 10)) if finite.size else -90.0
+    loud = float(np.percentile(db, 90))
+    active = db > max(noise + 12.0, loud - 30.0)
+
+    z = (x == 0.0).view(np.int8)
+    edges = np.diff(np.concatenate(([0], z, [0])))
+    starts, ends = np.nonzero(edges == 1)[0], np.nonzero(edges == -1)[0]
+
+    in_speech = in_silence = 0
+    longest = 0.0
+    for a, b in zip(starts, ends):
+        ms = (b - a) / sr * 1000.0
+        if ms <= min_ms:
+            continue
+        longest = max(longest, ms)
+        f0, f1 = a // n, min(len(db) - 1, b // n)
+        pre = active[max(0, f0 - 5):f0].any()
+        post = active[f1:f1 + 5].any()
+        if pre and post:
+            in_speech += 1
+        else:
+            in_silence += 1
+    return {"in_speech": in_speech, "in_silence": in_silence,
+            "longest_ms": round(longest, 1)}
+
+
 def head_transient_db(path: Path, window_ms: int = 200) -> float:
     """How loud the first window_ms is, relative to the body of the clip.
 

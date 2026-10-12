@@ -25,7 +25,8 @@ import numpy as np
 import soundfile as sf
 
 from dgeval.config import RECORDINGS, tier_c_media
-from dgeval.corpus.prepare import head_transient_db, tail_transient_db
+from dgeval.corpus.prepare import (dropouts_in_speech, head_transient_db,
+                                   tail_transient_db)
 from rich.console import Console
 from rich.table import Table
 
@@ -51,7 +52,7 @@ def main() -> None:
         raise SystemExit(f"no recordings in {RECORDINGS}; run `make record`")
 
     t = Table(title="tier C quality check", show_edge=False)
-    for c in ("clip", "dur", "SNR", "clip%", "head", "tail", "verdict"):
+    for c in ("clip", "dur", "SNR", "clip%", "head", "tail", "drops", "verdict"):
         t.add_column(c, justify="left" if c == "clip" else "right")
 
     problems: dict[str, list[str]] = {}
@@ -64,6 +65,7 @@ def main() -> None:
         clipped = float(np.mean(np.abs(x) > 0.99)) * 100
         head = head_transient_db(w)
         tail = tail_transient_db(w)
+        drops = dropouts_in_speech(w)
 
         issues = []
         if dur < 1.5:
@@ -78,6 +80,8 @@ def main() -> None:
             issues.append("start keypress audible")
         if tail > 0:
             issues.append("stop keypress louder than speech")
+        if drops["in_speech"]:
+            issues.append(f"{drops['in_speech']} dropout(s) in speech")
         if not (RECORDINGS / f"{w.stem}.txt").exists():
             issues.append("NO LABEL")
         if issues:
@@ -88,6 +92,7 @@ def main() -> None:
                 ("yellow" if issues else "green")
         t.add_row(w.stem, f"{dur:.1f}s", f"{s:.0f} dB", f"{clipped:.1f}%",
                   f"{head:+.1f}", f"{tail:+.1f}",
+                  f"{drops['in_speech']}" if drops["in_speech"] else "-",
                   f"[{style}]{', '.join(issues) if issues else 'ok'}[/]")
     console.print(t)
 
@@ -96,12 +101,11 @@ def main() -> None:
         console.print(f"[yellow]labels with no audio:[/] {', '.join(orphan_labels)}")
 
     keypress = [k for k, v in problems.items()
-                if any("keypress louder" in i for i in v)]
+                if any("keypress louder" in i or "dropout" in i for i in v)]
     console.print(f"\n{len(wavs)}/{len(labels)} clips recorded")
     if keypress:
-        console.print(
-            f"[yellow]{len(keypress)} clip(s) open with a keypress louder than the "
-            f"speech:[/] {' '.join(keypress)}")
+        console.print(f"[yellow]{len(keypress)} clip(s) need re-recording:[/] "
+                      f"{' '.join(keypress)}")
         console.print(
             "  The recorder now discards that window at capture, so re-recording "
             "fixes it:\n"
