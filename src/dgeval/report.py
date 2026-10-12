@@ -76,11 +76,38 @@ def gate_measurements(data: dict[str, Any]) -> dict[str, float | None]:
 
     ep = data.get("endpointing")
     if ep and ep.get("points"):
+        # Pick the setting the gate should be judged against. When a
+        # recommendation exists, use it. When none does -- because no value met
+        # the fragmentation ceiling -- use the setting with the LOWEST
+        # fragmentation, i.e. the best the knob can do. Falling back to
+        # points[0] (the most aggressive setting) would report the worst
+        # fragmentation alongside the best latency and flatter both numbers.
         rec_ms = (ep.get("recommendation") or {}).get("recommended_endpointing_ms")
-        pt = next((p for p in ep["points"] if p["endpointing_ms"] == rec_ms),
-                  None) or ep["points"][0]
+        pt = next((p for p in ep["points"] if p["endpointing_ms"] == rec_ms), None)
+        if pt is None:
+            pt = min(ep["points"],
+                     key=lambda p: (p["fragmentation_rate"],
+                                    p["final_p95"] if p["final_p95"] is not None
+                                    else float("inf")))
         m["finalization_delay_p95_ms"] = pt.get("final_p95")
         m["utterance_fragmentation_rate"] = pt.get("fragmentation_rate")
+        m["_gate_endpointing_ms"] = pt.get("endpointing_ms")
+
+        # Prefer the REAL-VOICE fragmentation figure where it exists. The gate
+        # is a production-readiness check and tier C is the closest thing to
+        # production in this corpus; the synthetic tier understated this metric
+        # by roughly 2.5x, so judging against it would pass a system that
+        # splits nearly every real caller's request.
+        fbt = data.get("fragmentation_by_tier") or {}
+        real = [r for r in fbt.get("rows", []) if r["tier"] == "C_real_domain"]
+        if real:
+            best = min(real, key=lambda r: r["fragmentation_rate"])
+            m["utterance_fragmentation_rate"] = best["fragmentation_rate"]
+            m["_fragmentation_source"] = (
+                f"tier C real voice @ endpointing={best['endpointing_ms']}ms")
+        else:
+            m["_fragmentation_source"] = (
+                f"tier A synthetic @ endpointing={pt.get('endpointing_ms')}ms")
 
     return m
 
@@ -88,7 +115,8 @@ def gate_measurements(data: dict[str, Any]) -> dict[str, float | None]:
 def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> str:
     data = data or load_results()
     meas = gate_measurements(data)
-    checks = evaluate(meas, None if gate_path is None else None)
+    context = {k: v for k, v in meas.items() if k.startswith("_")}
+    checks = evaluate({k: v for k, v in meas.items() if not k.startswith("_")})
     vd = verdict(checks)
 
     arms = {a["arm"]: a for a in data["arms"]}
@@ -125,6 +153,11 @@ def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> 
     for c in checks:
         res = "SKIP" if c.skipped else ("PASS" if c.passed else "**FAIL**")
         w(f"| {c.name} | {c.severity} | {_num(c.observed, 4)} | `{c.bound}` | {res} |")
+    if context.get("_fragmentation_source"):
+        w(f"\n`utterance_fragmentation_rate` is taken from "
+          f"**{context['_fragmentation_source']}**, not from the synthetic "
+          f"tier: this is a production-readiness check, and the synthetic tier "
+          f"understated that metric by roughly 2.5x.\n")
     w("\nThresholds and the reasoning behind each are in "
       "[`configs/gate.yaml`](../configs/gate.yaml). They are a starting point "
       "from the evaluator; the customer owns the final values.\n")

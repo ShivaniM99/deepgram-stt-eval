@@ -37,7 +37,8 @@ def main() -> None:
         raise SystemExit(2)
 
     meas = gate_measurements(data)
-    checks = evaluate(meas)
+    context = {k: v for k, v in meas.items() if k.startswith("_")}
+    checks = evaluate({k: v for k, v in meas.items() if not k.startswith("_")})
     vd = verdict(checks)
 
     t = Table(title="launch gate", show_edge=False)
@@ -56,6 +57,8 @@ def main() -> None:
     console.print(t)
 
     colour = {"GO": "green", "GO WITH CONDITIONS": "yellow", "NO-GO": "red"}[vd["decision"]]
+    for k, v in context.items():
+        console.print(f"[dim]{k.lstrip('_')}: {v}[/]")
     console.print(f"\n[bold {colour}]VERDICT: {vd['decision']}[/]")
     if vd["blockers_failed"]:
         console.print(f"  blockers: {', '.join(vd['blockers_failed'])}")
