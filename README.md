@@ -96,7 +96,7 @@ not lose audio.
 |---|---|---|---|
 | **A** domain synthetic | templated utterances, macOS `say` across 9 voices / 6 locales | 400 | entity accuracy at volume with exact labels |
 | **B** real control | LibriSpeech dev-clean, 1 clip per speaker × 40 speakers | 160 | calibrates the harness itself |
-| **C** real domain | your own recordings | — | the credibility anchor |
+| **C** real domain | own recordings, 16 lines x 4 conditions | 64 | the credibility anchor |
 | **D** non-speech | synthesized probes | 24 | fabrication |
 
 **Labels are generated, not annotated.** Utterances are composed from templates
@@ -109,12 +109,31 @@ speech with no pharmacy vocabulary. Its job is to catch a broken harness: if
 Deepgram scores far off its published dev-clean numbers here, the measurement
 apparatus is wrong, not the vendor.
 
-**Tier C is the one that matters most.** Run `make tier-c` to generate a
-16-line recording script and its label files; record on a phone, drop the
-files in `data/recordings/`, re-run `make corpus`. Lines are chosen
-adversarially — both halves of eight ISMP pairs — because the point of tier C
-is not coverage but putting a real human voice on the cases most likely to
-break.
+**Tier C is the one that matters most.** `make record` walks through a 16-line
+script and writes each clip straight to the correct filename; `make qc` then
+checks it. Lines are chosen adversarially — both halves of eight ISMP pairs —
+because the point of tier C is not coverage but putting a real human voice on
+the cases most likely to break.
+
+Getting this tier clean took four passes, and the reasons are worth stating
+because none of them were visible without checking:
+
+- The keypress starting each recording was captured up to 10 dB LOUDER than
+  the speech. Detecting it afterwards does not work -- once a transient sits
+  within ~250 ms of speech, no threshold separates them without risking the
+  first phoneme. The recorder counts in and discards a window instead, with
+  the countdown deliberately longer than the discard so device-init latency
+  cannot shift the cut into the first word.
+- Recording over a Continuity iPhone microphone produced runs of exact zeros
+  INTERRUPTING SPEECH, periodic at roughly 450 ms, on three clips. A gap like
+  that causes a recognition error belonging to the capture path, not the
+  recognizer -- a false error in the one tier that anchors the report.
+  `make qc` now detects this; the built-in microphone has no wireless link and
+  also measured better (33 dB SNR against 23-30 dB).
+
+The general lesson, and the one worth carrying into any evaluation: an eval
+harness that has not been audited against its own data will report the
+measurement apparatus as a property of the thing being measured.
 
 ---
 
