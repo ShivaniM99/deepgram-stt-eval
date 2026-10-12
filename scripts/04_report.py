@@ -5,8 +5,8 @@ Non-zero exit is the point: this is a CI gate, not a document. Wiring it into
 a pipeline means a model bump that regresses drug-name accuracy fails the
 build instead of reaching a pharmacy queue.
 
-  python scripts/05_report.py
-  python scripts/05_report.py --no-gate   # render only, always exit 0
+  python scripts/04_report.py
+  python scripts/04_report.py --no-gate   # render only, always exit 0
 """
 from __future__ import annotations
 

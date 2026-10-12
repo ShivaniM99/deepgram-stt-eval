@@ -23,10 +23,10 @@ keyterm:  ## all three keyterm arms (lift AND false-trigger analysis)
 	.venv/bin/python scripts/02_run_eval.py --arms baseline keyterm_all keyterm_half
 
 sweep:  ## endpointing latency/truncation sweep (streaming, real time)
-	.venv/bin/python scripts/04_endpointing_sweep.py --n 20
+	.venv/bin/python scripts/03_endpointing_sweep.py --n 20
 
 report:  ## render the report and apply the launch gate (non-zero on blocker)
-	.venv/bin/python scripts/05_report.py
+	.venv/bin/python scripts/04_report.py
 
 all: corpus keyterm sweep report  ## the full run
 

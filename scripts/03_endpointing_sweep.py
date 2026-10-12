@@ -6,8 +6,8 @@ this deliberately uses a SUBSET rather than the whole corpus: 20 clips x 5
 settings x ~6 s is about 10 minutes of audio, roughly $0.05, and about 10
 minutes of wall clock.
 
-  python scripts/04_endpointing_sweep.py --n 20
-  python scripts/04_endpointing_sweep.py --n 20 --values 10 300 1000
+  python scripts/03_endpointing_sweep.py --n 20
+  python scripts/03_endpointing_sweep.py --n 20 --values 10 300 1000
 """
 from __future__ import annotations
 
