@@ -28,7 +28,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from dgeval.config import AUDIO, MANIFEST, RECORDINGS
-from dgeval.corpus import degrade, external, nonspeech, tts
+from dgeval.corpus import degrade, external, nonspeech, prepare, tts
 from dgeval.corpus.generate import coverage, generate
 from rich.console import Console
 from rich.table import Table
@@ -46,8 +46,10 @@ def build_tier_a(n: int, conditions: list[str], seed: int) -> list[dict]:
 
     rows: list[dict] = []
     for u, (voice, locale) in zip(utts, voices):
+        raw = AUDIO / f"{u.uid}_raw.wav"
         base = AUDIO / f"{u.uid}_base.wav"
-        tts.synth_say(u.text, voice, base)
+        tts.synth_say(u.text, voice, raw)
+        prepare.prepare(raw, base)
         for cond in conditions:
             out = AUDIO / f"{u.uid}_{cond}.wav"
             degrade.apply(cond, base, out, seed=hash(u.uid) % 10_000)
@@ -70,8 +72,10 @@ def build_tier_b(n: int, conditions: list[str], seed: int) -> list[dict]:
                   f"from {len({p[0].split('-')[0] for p in picked})} speakers")
     rows: list[dict] = []
     for utt_id, flac, text in picked:
+        raw = AUDIO / f"B_{utt_id}_raw.wav"
         base = AUDIO / f"B_{utt_id}_base.wav"
-        external.to_wav(flac, base)
+        external.to_wav(flac, raw)
+        prepare.prepare(raw, base)
         for cond in conditions:
             out = AUDIO / f"B_{utt_id}_{cond}.wav"
             degrade.apply(cond, base, out, seed=hash(utt_id) % 10_000)
@@ -107,8 +111,10 @@ def build_tier_c(conditions: list[str]) -> list[dict]:
             continue
         labelled += 1
         text = ref.read_text().strip()
+        raw = AUDIO / f"C_{m.stem}_raw.wav"
         base = AUDIO / f"C_{m.stem}_base.wav"
-        external.to_wav(m, base)
+        external.to_wav(m, raw)
+        prepare.prepare(raw, base)
         for cond in conditions:
             out = AUDIO / f"C_{m.stem}_{cond}.wav"
             degrade.apply(cond, base, out, seed=hash(m.stem) % 10_000)

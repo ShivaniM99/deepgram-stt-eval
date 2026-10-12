@@ -24,7 +24,11 @@ from __future__ import annotations
 import argparse
 import subprocess
 import sys
+import time
 from pathlib import Path
+
+import numpy as np
+import soundfile as sf
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
@@ -61,8 +65,18 @@ def list_devices() -> None:
             console.print("  " + line.split("] ", 1)[-1])
 
 
-def record(device: str, dst: Path) -> bool:
-    """Record until the user presses Enter. Returns False if nothing captured."""
+def record(device: str, dst: Path, discard_head_ms: int = 700) -> bool:
+    """Record until the user presses Enter. Returns False if nothing captured.
+
+    The first `discard_head_ms` are thrown away, because the keypress that
+    starts the recording is captured by the microphone as a sharp transient --
+    on the first pass through this corpus it landed up to 6 dB LOUDER than the
+    speech that followed. Detecting and excising it afterwards was tried and
+    abandoned: once a transient sits within ~250 ms of speech, no threshold
+    separates the two without risking the first phoneme. Discarding a fixed
+    window at capture, with an on-screen cue so the speaker waits for it,
+    removes the artifact instead of guessing at it.
+    """
     tmp = dst.with_suffix(".rec.wav")
     proc = subprocess.Popen(
         ["ffmpeg", "-y", "-loglevel", "error",
@@ -70,7 +84,9 @@ def record(device: str, dst: Path) -> bool:
          "-ac", "1", "-ar", "16000", "-acodec", "pcm_s16le", str(tmp)],
         stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
     )
-    console.print("  [bold red]RECORDING[/] — press [bold]Enter[/] when you finish the line")
+    # Hold the speaker off until the keypress window has elapsed.
+    time.sleep(discard_head_ms / 1000.0 + 0.15)
+    console.print("  [bold red]SPEAK NOW[/] — press [bold]Enter[/] when you finish the line")
     try:
         input()
     except (KeyboardInterrupt, EOFError):
@@ -92,7 +108,15 @@ def record(device: str, dst: Path) -> bool:
         tmp.unlink(missing_ok=True)
         return False
 
-    tmp.replace(dst)
+    # Drop the keypress window.
+    x, sr = sf.read(str(tmp), dtype="float32", always_2d=False)
+    if x.ndim > 1:
+        x = x.mean(axis=1)
+    k = int(sr * discard_head_ms / 1000.0)
+    if len(x) > k + sr // 4:
+        x = x[k:]
+    sf.write(str(dst), np.clip(x, -1.0, 1.0), sr, subtype="PCM_16")
+    tmp.unlink(missing_ok=True)
     return True
 
 
@@ -113,6 +137,8 @@ def main() -> None:
     ap.add_argument("--only", nargs="*", default=None, help="e.g. --only c03 c07")
     ap.add_argument("--force", action="store_true", help="re-record existing clips")
     ap.add_argument("--list-devices", action="store_true")
+    ap.add_argument("--discard-head-ms", type=int, default=700,
+                    help="audio thrown away at the start to drop the keypress")
     args = ap.parse_args()
 
     if args.list_devices:
@@ -158,7 +184,7 @@ def main() -> None:
             if input().strip().lower() == "s":
                 console.print("  [yellow]skipped[/]")
                 break
-            if not record(args.device, wav):
+            if not record(args.device, wav, args.discard_head_ms):
                 break
             console.print(f"  captured {duration(wav):.1f}s — playing back")
             subprocess.run(["afplay", str(wav)], check=False)

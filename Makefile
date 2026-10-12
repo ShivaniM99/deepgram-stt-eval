@@ -1,4 +1,4 @@
-.PHONY: help setup test corpus tier-c record eval keyterm sweep report all clean cache-stats
+.PHONY: help setup test corpus tier-c record qc probe eval keyterm sweep report all clean cache-stats
 
 help:
 	@grep -E '^[a-z-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "};{printf "  \033[36m%-12s\033[0m %s\n",$$1,$$2}'
@@ -18,6 +18,12 @@ tier-c:  ## generate the tier C recording script + label files
 
 record:  ## guided tier C recording, straight to the correct filenames
 	.venv/bin/python scripts/record_tier_c.py
+
+qc:  ## check tier C recording quality (local, free)
+	.venv/bin/python scripts/qc_recordings.py
+
+probe:  ## ~1 cent: does the keypress become a word? decides re-recording
+	.venv/bin/python scripts/probe_tier_c.py
 
 eval:  ## baseline transcription + scoring
 	.venv/bin/python scripts/02_run_eval.py --arms baseline
