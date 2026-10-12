@@ -9,6 +9,12 @@ This repo is the apparatus for answering that. It is not a benchmark and not a
 demo — it is a gate the customer keeps and runs on every model version, config
 change and SDK bump.
 
+**Results:** [FINDINGS.md](FINDINGS.md) explains what this found in plain
+language. [`reports/launch_readiness.md`](reports/launch_readiness.md) is the
+technical report and [`reports/MEMO.md`](reports/MEMO.md) the customer-facing
+one-pager. Headline: a *partial* keyterm list is worse than no keyterm list, and
+88% of real requests arrive split across multiple transcript segments.
+
 ```bash
 make setup      # venv + install
 make test       # verify the measurement logic -- no API key needed
