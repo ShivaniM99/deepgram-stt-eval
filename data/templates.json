@@ -1,0 +1,25 @@
+{
+  "_note": "Utterance templates for a pharmacy refill phone line. Each template declares which entity slots it carries, so the generator can emit ground-truth text AND structured entity labels in one pass -- no manual annotation. This is what makes a corpus of this size feasible to label exactly.",
+  "templates": [
+    {"id": "t01", "text": "Hi, I need to refill my prescription for {drug}.", "slots": ["drug"]},
+    {"id": "t02", "text": "I'd like a refill on {drug} {dose}, prescription number {rx}.", "slots": ["drug", "dose", "rx"]},
+    {"id": "t03", "text": "This is {name}, date of birth {dob}, calling to refill {drug}.", "slots": ["name", "dob", "drug"]},
+    {"id": "t04", "text": "My prescription number is {rx} and the medication is {drug}.", "slots": ["rx", "drug"]},
+    {"id": "t05", "text": "Can you check if my {drug} is ready for pickup? Rx {rx}.", "slots": ["drug", "rx"]},
+    {"id": "t06", "text": "I'm calling about {drug} {dose}. My date of birth is {dob}.", "slots": ["drug", "dose", "dob"]},
+    {"id": "t07", "text": "Refill request for {name}, {dob}, {drug} {dose}.", "slots": ["name", "dob", "drug", "dose"]},
+    {"id": "t08", "text": "Yes, that's {drug}, not the other one. Prescription {rx}.", "slots": ["drug", "rx"]},
+    {"id": "t09", "text": "I take {drug} {dose} once daily and I need more.", "slots": ["drug", "dose"]},
+    {"id": "t10", "text": "The number on the bottle is {rx}, and it says {drug}.", "slots": ["rx", "drug"]},
+    {"id": "t11", "text": "Hello, my name is {name} and I need to transfer my {drug} prescription.", "slots": ["name", "drug"]},
+    {"id": "t12", "text": "Could you refill {drug} for me? Born {dob}, Rx number {rx}.", "slots": ["drug", "dob", "rx"]},
+    {"id": "t13", "text": "It's {drug}, {dose}. Let me spell that if you need.", "slots": ["drug", "dose"]},
+    {"id": "t14", "text": "I have two prescriptions, {drug} and the other is for blood pressure.", "slots": ["drug"]},
+    {"id": "t15", "text": "Date of birth {dob}, prescription number {rx}, thank you.", "slots": ["dob", "rx"]}
+  ],
+  "names": [
+    "Maria Gonzalez", "James Whitfield", "Priya Raghavan", "Deborah Chen",
+    "Ahmed Hassan", "Linda Kowalski", "Marcus Obi", "Yuki Tanaka",
+    "Robert Delacroix", "Fatima Al-Rashid", "Eleanor Vance", "Dmitri Volkov"
+  ]
+}

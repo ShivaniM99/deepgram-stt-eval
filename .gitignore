@@ -1,0 +1,16 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.cache/
+data/corpus/audio/
+data/corpus/manifest.jsonl
+data/external/
+data/recordings/*.wav
+data/recordings/*.m4a
+!data/recordings/.gitkeep
+reports/*.html
+reports/*.md
+!reports/.gitkeep
+sessions/
+.DS_Store

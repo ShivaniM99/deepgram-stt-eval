@@ -1,0 +1,122 @@
+# Launch gate for the pharmacy refill line.
+#
+# This file is the deliverable the customer keeps. It turns "we evaluated it"
+# into a check that runs on every model change, config change and SDK bump,
+# and fails the build when a threshold regresses.
+#
+# Every threshold carries the reasoning for its value. A number without a
+# justification is not a gate, it is a guess with a decimal point -- and when
+# a release is blocked at 2am the on-call engineer needs to know whether the
+# threshold is a safety floor or somebody's round number.
+#
+# These values are a STARTING POINT written by the evaluator, not accepted
+# requirements. The customer owns them: the pharmacy's own risk tolerance,
+# call volume and human-review capacity decide where they land. Signing off on
+# this file is a deliberate step in the engagement.
+
+meta:
+  use_case: "Inbound prescription refill by phone"
+  owner: "unassigned -- customer to confirm before launch"
+  reviewed: null
+
+thresholds:
+
+  # --- the safety-critical ones --------------------------------------------
+
+  drug_cross_confusion_rate:
+    max: 0.0
+    scope: {tier: A_domain_synthetic}
+    severity: blocker
+    why: >
+      A cross-confusion is the transcript naming a DIFFERENT REAL DRUG that is
+      a documented ISMP confusable of the one spoken. Unlike a garbled word it
+      is well-formed and plausible, so no downstream validation layer and no
+      pharmacist reading a queue will reliably catch it. There is no acceptable
+      non-zero rate for an automated path; any occurrence must route to a human
+      instead. Set to exactly 0.
+
+  drug_accuracy:
+    min: 0.98
+    scope: {tier: A_domain_synthetic, condition: telephony_8k_ulaw}
+    severity: blocker
+    why: >
+      Measured on the narrowband condition because that is the real transport,
+      not on clean 16 kHz. 98% is not a safety claim on its own -- it is the
+      point at which the residual 2% is small enough for the confirmation
+      readback step to carry, given this line reads the drug name back to the
+      caller before committing. Without a readback step this threshold is too
+      low and should be raised.
+
+  rx_exact_match:
+    min: 0.95
+    scope: {tier: A_domain_synthetic, condition: telephony_8k_ulaw}
+    severity: blocker
+    why: >
+      A prescription number is all-or-nothing: one wrong digit resolves to a
+      different prescription or to nothing. 95% reflects that a failed lookup
+      is self-revealing -- the record does not exist, the call escalates -- so
+      the failure mode is an annoyed caller rather than a wrong medication.
+      That is why this sits below the drug-name floor rather than at it.
+
+  hallucination_insertion_rate:
+    max: 0.0
+    scope: {tier: D_nonspeech}
+    severity: blocker
+    why: >
+      Any words returned for audio containing no speech. Hold music, dial tone
+      and line noise all occur constantly on a real line. A fabricated
+      utterance can enter the workflow with no caller behind it at all, which
+      means it cannot be corrected by the caller. Zero tolerance.
+
+  # --- quality and experience ----------------------------------------------
+
+  dob_accuracy:
+    min: 0.90
+    scope: {tier: A_domain_synthetic, condition: telephony_8k_ulaw}
+    severity: warn
+    why: >
+      Date of birth is an identity CHECK, not the instruction being executed,
+      and a mismatch fails closed -- the caller is asked to repeat it. A warn
+      rather than a blocker because the failure is recoverable in-call.
+
+  wer_domain:
+    max: 0.15
+    scope: {tier: A_domain_synthetic, condition: telephony_8k_ulaw}
+    severity: warn
+    why: >
+      Kept deliberately loose and deliberately non-blocking. WER weights every
+      word equally, which is wrong for this use case: the entity thresholds
+      above are what the decision rests on. This exists to catch gross
+      regressions -- a wrong language, a broken audio path -- not to express a
+      quality bar.
+
+  wer_control_regression:
+    max_delta: 0.02
+    scope: {tier: B_real_control}
+    severity: blocker
+    why: >
+      Guards against collateral damage from keyterm prompting. Tier B contains
+      no pharmacy vocabulary, so attaching a 50-term drug list must not make
+      ordinary speech worse. More than 2 points of WER regression on the
+      control means the boost is being paid for by every other caller.
+
+  endpoint_latency_p95_ms:
+    max: 1200
+    scope: {metric: endpoint_ms}
+    severity: warn
+    why: >
+      Caller stops speaking to final transcript available, 95th percentile.
+      Past roughly 1.2 s of dead air callers start repeating themselves, which
+      corrupts the next turn. p95 not mean, because the tail is what generates
+      complaints. CLIENT-OBSERVED from the test machine and therefore inclusive
+      of network round trip -- see the baseline RTT reported alongside.
+
+  endpoint_truncation_rate:
+    max: 0.02
+    scope: {metric: truncated}
+    severity: blocker
+    why: >
+      The counterweight to the latency threshold. Endpointing can always be
+      made faster by cutting the caller off sooner, which silently drops the
+      end of utterances -- and the end is where the Rx number usually is.
+      Tuning latency without this threshold present optimizes toward data loss.
