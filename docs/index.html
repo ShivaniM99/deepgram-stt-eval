@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deepgram STT launch readiness — pharmacy refill line</title>
+<meta name="description" content="A launch-readiness evaluation of Deepgram Nova-3 for a pharmacy refill phone line: entity accuracy, hallucination, keyterm false-triggering and endpointing. Listen to the failures.">
+<style>
+  :root{
+    color-scheme: light;
+    --bg:#fcfcfb; --panel:#ffffff; --line:#e4e3de;
+    --ink:#0b0b0b; --ink2:#52514e; --ink3:#8a8982;
+    --s1:#2a78d6; --s2:#eb6834; --good:#0ca30c; --crit:#d03b3b;
+    --mono: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --bg:#1a1a19; --panel:#232322; --line:#333331;
+      --ink:#ffffff; --ink2:#c3c2b7; --ink3:#8a8982;
+      --s1:#3987e5; --s2:#d95926;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:0 16px 96px}
+  header{padding:64px 0 36px}
+  h1{font-size:clamp(28px,5vw,40px); line-height:1.15; margin:0 0 14px; letter-spacing:-.02em}
+  .lede{font-size:clamp(17px,2.4vw,19px); color:var(--ink2); margin:0 0 26px; max-width:62ch}
+  .badge{
+    display:inline-flex; align-items:center; gap:8px; padding:7px 14px;
+    border-radius:999px; font-weight:650; font-size:14px;
+    background:color-mix(in srgb, var(--crit) 14%, transparent);
+    color:var(--crit); border:1px solid color-mix(in srgb, var(--crit) 35%, transparent);
+  }
+  .meta{color:var(--ink3); font-size:14px; margin-top:20px}
+  .meta a{color:var(--s1)}
+  h2{font-size:clamp(21px,3vw,26px); margin:56px 0 8px; letter-spacing:-.01em}
+  h3{font-size:17px; margin:30px 0 8px}
+  p{margin:0 0 16px; max-width:68ch}
+  .sub{color:var(--ink2); margin-top:-2px}
+  figure{margin:24px 0 8px}
+  figure img{width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:10px}
+  figcaption{color:var(--ink3); font-size:13.5px; margin-top:10px; max-width:68ch}
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:20px; margin:20px 0;
+  }
+  .card h3{margin-top:0}
+  audio{width:100%; margin:10px 0 16px; height:38px}
+  .rows{display:grid; gap:10px}
+  .row{
+    display:grid; grid-template-columns:132px 1fr; gap:14px; align-items:start;
+    padding:11px 0; border-top:1px solid var(--line);
+  }
+  .row:first-child{border-top:0}
+  .tag{font-size:13px; color:var(--ink2); font-weight:600; padding-top:1px}
+  .said{font-family:var(--mono); font-size:13.5px; line-height:1.55}
+  mark.ok{background:color-mix(in srgb,var(--good) 20%,transparent); color:inherit; padding:1px 4px; border-radius:4px; font-weight:700}
+  mark.bad{background:color-mix(in srgb,var(--crit) 22%,transparent); color:inherit; padding:1px 4px; border-radius:4px; font-weight:700}
+  .verdict{font-size:13.5px; font-weight:650; margin-top:12px}
+  .verdict.bad{color:var(--crit)} .verdict.good{color:var(--good)}
+  table{border-collapse:collapse; width:100%; font-size:14.5px; margin:18px 0}
+  th,td{text-align:left; padding:9px 10px; border-bottom:1px solid var(--line)}
+  th{color:var(--ink2); font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:.04em}
+  td.num{text-align:right; font-family:var(--mono); font-size:13.5px}
+  .pass{color:var(--good); font-weight:650} .fail{color:var(--crit); font-weight:650}
+  ul{padding-left:20px; max-width:68ch} li{margin:7px 0}
+  .foot{margin-top:72px; padding-top:26px; border-top:1px solid var(--line); color:var(--ink3); font-size:14px}
+  .foot a{color:var(--s1)}
+  .btn{
+    display:inline-block; padding:10px 18px; border-radius:9px; font-weight:600;
+    font-size:15px; text-decoration:none; background:var(--s1); color:#fff; margin:4px 8px 4px 0;
+  }
+  .btn.ghost{background:transparent; color:var(--s1); border:1px solid var(--line)}
+  @media (max-width:560px){ .row{grid-template-columns:1fr; gap:4px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="badge">NO-GO &mdash; 2 blocking issues</div>
+  <h1>Is Deepgram good enough for a pharmacy refill line?</h1>
+  <p class="lede">
+    A pre-launch evaluation of Deepgram Nova&#8209;3 on 648 audio clips &mdash; synthetic,
+    real-voice, and silence. It is accurate enough and it never invents words.
+    Two things about <em>how you connect it</em> would still have caused harm.
+  </p>
+  <p>
+    <a class="btn" href="https://github.com/ShivaniM99/deepgram-stt-eval">The harness on GitHub</a>
+    <a class="btn ghost" href="https://github.com/ShivaniM99/deepgram-stt-eval/blob/main/reports/MEMO.md">Customer memo</a>
+    <a class="btn ghost" href="https://github.com/ShivaniM99/deepgram-stt-eval/blob/main/reports/launch_readiness.md">Full report</a>
+  </p>
+  <p class="meta">
+    648 clips &middot; 67 minutes of audio &middot; 4 channel conditions &middot;
+    total API spend <strong>$0.93</strong> &middot; by
+    <a href="https://github.com/ShivaniM99">Shivani Madan</a>
+  </p>
+</header>
+
+<h2>Hear the failures</h2>
+<p class="sub">Every clip below is synthesized, so you can regenerate all of it from the
+repository. Press play, then read what came back.</p>
+
+<div class="card">
+  <h3>1. The same audio. One config change. A different real drug.</h3>
+  <p class="sub">Telephone-quality audio, Australian English voice. Nothing about the
+  audio changes between these two rows &mdash; only whether a keyterm list was attached.</p>
+  <audio controls preload="none" src="audio/A0020_telephony_8k_ulaw.mp3"></audio>
+  <div class="rows">
+    <div class="row"><div class="tag">actually said</div>
+      <div class="said">I'm calling about <mark class="ok">cyclosporine</mark> 100 milligrams. My date of birth is August nineteenth, nineteen forty one.</div></div>
+    <div class="row"><div class="tag">no keyterm list</div>
+      <div class="said">I'm calling about <mark class="ok">cyclosporine</mark> one hundred milligrams. My date of birth is 08/19/1941.</div></div>
+    <div class="row"><div class="tag">half a keyterm list</div>
+      <div class="said">I'm calling about <mark class="bad">cycloserine</mark> one hundred milligrams. My date of birth is 08/19/1941.</div></div>
+  </div>
+  <p class="verdict bad">Cycloserine is a real, dispensable tuberculosis drug. The sentence is
+  fluent and well-formed, so nothing downstream rejects it. Adding a partial keyterm list
+  caused this; with no list the same audio transcribed correctly.</p>
+</div>
+
+<div class="card">
+  <h3>2. The same words, degraded down to a phone line</h3>
+  <p class="sub">Indian English voice, identical utterance, rendered at studio quality and
+  then through an 8&nbsp;kHz G.711 telephone channel.</p>
+  <audio controls preload="none" src="audio/A0016_clean_16k.mp3"></audio>
+  <div class="rows">
+    <div class="row"><div class="tag">clean 16 kHz</div>
+      <div class="said">I'd like a refill on <mark class="ok">amiodarone</mark> two hundred milligrams. Prescription number 3562773.</div></div>
+  </div>
+  <audio controls preload="none" src="audio/A0016_telephony_8k_ulaw.mp3"></audio>
+  <div class="rows">
+    <div class="row"><div class="tag">telephone 8 kHz</div>
+      <div class="said">I'd like a refill on <mark class="bad">Ami order on</mark> two hundred milligrams. Prescription number 3562773.</div></div>
+    <div class="row"><div class="tag">+ half keyterm list</div>
+      <div class="said">I'd like a refill on <mark class="bad">amlodipine</mark>. On two hundred milligrams. Prescription number 3562773.</div></div>
+  </div>
+  <p class="verdict bad">"Ami order on" is obvious nonsense &mdash; a human would catch it.
+  "Amlodipine" is a blood-pressure medication, and nobody catches that. The prescription
+  number survived every condition.</p>
+</div>
+
+<div class="card">
+  <h3>3. Audio with no speech in it at all</h3>
+  <p class="sub">Synthesized hold music. Some systems invent plausible sentences out of
+  this, which on a pharmacy line means a refill request with no patient behind it.</p>
+  <audio controls preload="none" src="audio/D_hold_music_0.mp3"></audio>
+  <div class="rows">
+    <div class="row"><div class="tag">transcript</div>
+      <div class="said" style="color:var(--ink3)">(empty)</div></div>
+  </div>
+  <p class="verdict good">Nothing returned &mdash; on all 24 non-speech clips, in all three
+  configurations. Silence, dial tone, keypad beeps, line hiss, crosstalk and music.
+  This is a genuine strength.</p>
+</div>
+
+<h2>What the numbers say</h2>
+
+<figure>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="charts/keyterm-false-trigger-dark.svg">
+    <img src="charts/keyterm-false-trigger-light.svg" alt="Grouped bar chart. With no keyterm list, drug accuracy is 86.5% for drugs on the list and 86.4% for drugs off it. With the full list, 91.5% and 94.3%. With half a list, listed drugs rise to 93.0% while unlisted drugs fall to 75.6%.">
+  </picture>
+  <figcaption>The diagnostic arm boosted only one member of each confusable drug pair &mdash;
+  what happens naturally if a pharmacy lists its best sellers. Accuracy on listed drugs rose
+  6.5 points; accuracy on their unlisted partners fell 10.8. All eight cross-confusions ran
+  from the unlisted drug toward the listed one, never the reverse. A recall-only evaluation
+  would have scored this arm as an improvement and shipped it.</figcaption>
+</figure>
+
+<figure>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="charts/fragmentation-dark.svg">
+    <img src="charts/fragmentation-light.svg" alt="Bar chart. Synthetic voices fragment 38% of requests; a real human voice fragments 94%.">
+  </picture>
+  <figcaption>Deepgram finalizes a transcript segment after a pause, and people pause in the
+  middle of reading a seven-digit number. No endpointing value fixed this &mdash; 88% were still
+  split at a one-second threshold. The synthetic tier understated it by 2.5&times;, which is the
+  clearest argument here for testing on real voices.</figcaption>
+</figure>
+
+<figure>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="charts/channel-degradation-dark.svg">
+    <img src="charts/channel-degradation-light.svg" alt="Grouped bar chart of drug-name accuracy across four channel conditions, with and without a full keyterm list. Accuracy falls from 87.2% on clean audio to 80.9% on a noisy telephone line without a list, and from 94.7% to 87.2% with one.">
+  </picture>
+  <figcaption>A full keyterm list is worth having: it lifts telephone-channel drug accuracy
+  from 86.2% to 93.6%. It does not reach the 98% this use case needs, which is why the
+  recommendation is a spoken confirmation readback rather than a different vendor.</figcaption>
+</figure>
+
+<h2>The launch gate</h2>
+<p>Thresholds are a starting proposal, each with its reasoning recorded in
+<a href="https://github.com/ShivaniM99/deepgram-stt-eval/blob/main/configs/gate.yaml"><code>gate.yaml</code></a>.
+The harness exits non-zero when a blocker fails, so it runs in CI on every model version.</p>
+
+<table>
+  <thead><tr><th>Check</th><th>Observed</th><th>Required</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Drug cross-confusion rate</td><td class="num">0%</td><td class="num">0%</td><td class="pass">PASS</td></tr>
+    <tr><td>Drug-name accuracy</td><td class="num">93.6%</td><td class="num">&ge; 98%</td><td class="fail">FAIL</td></tr>
+    <tr><td>Rx number exact match</td><td class="num">100%</td><td class="num">&ge; 95%</td><td class="pass">PASS</td></tr>
+    <tr><td>Hallucination on non-speech</td><td class="num">0%</td><td class="num">0%</td><td class="pass">PASS</td></tr>
+    <tr><td>Date-of-birth accuracy</td><td class="num">97.0%</td><td class="num">&ge; 90%</td><td class="pass">PASS</td></tr>
+    <tr><td>Control WER regression</td><td class="num">0.07%</td><td class="num">&le; 2%</td><td class="pass">PASS</td></tr>
+    <tr><td>Finalization delay p95</td><td class="num">2016 ms</td><td class="num">&le; 2500 ms</td><td class="pass">PASS</td></tr>
+    <tr><td>Utterance fragmentation</td><td class="num">88%</td><td class="num">&le; 10%</td><td class="fail">FAIL</td></tr>
+  </tbody>
+</table>
+
+<h2>What would fix it</h2>
+<ul>
+  <li><strong>Read the drug name back and require confirmation.</strong> The 98% threshold is
+  only defensible because such a step exists; without it the bar must be higher.</li>
+  <li><strong>Buffer transcript segments; never act on one.</strong> Accumulate consecutive
+  finals and use <code>UtteranceEnd</code> to decide a caller has finished.</li>
+  <li><strong>Use the complete formulary in the keyterm list, or none of it.</strong></li>
+  <li><strong>Route low-confidence drug names to a person</strong> rather than accepting a wrong one.</li>
+</ul>
+
+<h2>What this does not establish</h2>
+<ul>
+  <li><strong>No real pharmacy call audio.</strong> That is protected health information. The
+  real-voice set is 16 clips in one voice &mdash; enough to show a problem exists, not to size it.</li>
+  <li><strong>Two assumptions were wrong in the same direction.</strong> The synthetic tier turned
+  out <em>harder</em> than real speech on word error rate and <em>easier</em> on fragmentation.
+  It is a stress test, not a proxy for real callers.</li>
+  <li><strong>Latency is client-observed</strong> from one machine, inclusive of network round
+  trip. Three earlier definitions of this metric were discarded as meaningless against the live
+  API; one returned negative three seconds.</li>
+  <li><strong>Single-turn only.</strong> No barge-in, multi-turn state or tool calling &mdash;
+  the Voice Agent API is out of scope here.</li>
+</ul>
+
+<div class="foot">
+  <p>Built as an evaluation exercise. Drug pairs are from the ISMP List of Confused Drug Names;
+  the control set is LibriSpeech (CC&nbsp;BY&nbsp;4.0). All audio on this page is synthesized.</p>
+  <p><a href="https://github.com/ShivaniM99/deepgram-stt-eval">github.com/ShivaniM99/deepgram-stt-eval</a></p>
+</div>
+
+</div>
+</body>
+</html>

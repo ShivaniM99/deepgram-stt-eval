@@ -9,11 +9,42 @@ This repo is the apparatus for answering that. It is not a benchmark and not a
 demo — it is a gate the customer keeps and runs on every model version, config
 change and SDK bump.
 
-**Results:** [FINDINGS.md](FINDINGS.md) explains what this found in plain
-language. [`reports/launch_readiness.md`](reports/launch_readiness.md) is the
-technical report and [`reports/MEMO.md`](reports/MEMO.md) the customer-facing
-one-pager. Headline: a *partial* keyterm list is worse than no keyterm list, and
-88% of real requests arrive split across multiple transcript segments.
+### ▶ [Listen to the failures and read the results](https://shivanim99.github.io/deepgram-stt-eval/)
+
+Verdict: **NO-GO**, on two blocking issues. Nova-3 is accurate enough and never
+invents words; two things about *how you connect it* would still have caused harm.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="charts/keyterm-false-trigger-dark.svg">
+  <img src="charts/keyterm-false-trigger-light.svg" alt="Drug-name accuracy by whether the spoken drug was on the keyterm boost list. With no list, 86.5% and 86.4%. With the full list, 91.5% and 94.3%. With half a list, listed drugs rise to 93.0% while unlisted drugs fall to 75.6%.">
+</picture>
+
+**A partial keyterm list is worse than no list.** Boosting one member of each
+confusable drug pair -- what happens naturally if a pharmacy lists its best
+sellers -- raised accuracy on listed drugs by 6.5 points and dropped their
+unlisted partners by 10.8. All eight cross-confusions ran from the unlisted drug
+*toward* the listed one, never the reverse, and with no list there were zero. A
+recall-only evaluation would have scored that arm as an improvement and shipped
+it.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="charts/fragmentation-dark.svg">
+  <img src="charts/fragmentation-light.svg" alt="Share of requests arriving as more than one transcript segment: 38% for synthetic voices, 94% for a real human voice.">
+</picture>
+
+**Real speech splits far more than synthetic speech.** People pause in the middle
+of a seven-digit number, so 94% of real requests arrived in more than one
+segment -- 88% even at a one-second endpointing threshold. The first segment
+carries the drug name and the second the prescription number, so anything acting
+on one final holds half a request that looks whole.
+
+Also measured: **zero fabrication** on all 24 non-speech clips (silence, hold
+music, DTMF, dial tone, line noise, crosstalk) in all three configurations, and
+**100% exact match** on 188 prescription numbers across every channel condition.
+
+Full results: [FINDINGS.md](FINDINGS.md) in plain language,
+[`reports/launch_readiness.md`](reports/launch_readiness.md) technical,
+[`reports/MEMO.md`](reports/MEMO.md) customer-facing.
 
 ```bash
 make setup      # venv + install
