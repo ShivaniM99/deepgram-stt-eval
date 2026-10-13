@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 450" width="760" height="450" role="img" aria-label="A partial keyterm list is worse than no list at all. Drug-name accuracy, by whether the spoken drug was on the boost list. n=376 per arm.">
-<rect width="760" height="450" fill="#fcfcfb"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 500" width="760" height="500" role="img" aria-label="Listing some drug names made the unlisted ones worse. How often the medicine name came out right. You can give the system a list of words to listen for.">
+<rect width="760" height="500" fill="#fcfcfb"/>
 <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
-<text x="58" y="34" font-size="19" font-weight="650" fill="#0b0b0b">A partial keyterm list is worse than no list at all</text>
-<text x="58" y="56" font-size="13" fill="#52514e">Drug-name accuracy, by whether the spoken drug was on the boost list. n=376 per arm.</text>
+<text x="58" y="34" font-size="19" font-weight="650" fill="#0b0b0b">Listing some drug names made the unlisted ones worse</text>
+<text x="58" y="56" font-size="13" fill="#52514e">How often the medicine name came out right. You can give the system a list of words to listen for.</text>
 <line x1="58" y1="342.0" x2="732" y2="342.0" stroke="#e4e3de" stroke-width="1"/>
 <text x="48" y="346.0" font-size="11" text-anchor="end" fill="#8a8982">0</text>
 <line x1="58" y1="292.0" x2="732" y2="292.0" stroke="#e4e3de" stroke-width="1"/>
@@ -16,24 +16,28 @@
 <line x1="58" y1="92.0" x2="732" y2="92.0" stroke="#e4e3de" stroke-width="1"/>
 <text x="48" y="96.0" font-size="11" text-anchor="end" fill="#8a8982">100</text>
 <path d="M113.3,342.0 V129.8 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#2a78d6"/>
-<text x="141.3" y="118.8" font-size="11.5" font-weight="600" text-anchor="middle" fill="#0b0b0b">86.5%</text>
-<path d="M171.3,342.0 V130.1 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#eb6834"/>
-<text x="199.3" y="119.1" font-size="11.5" font-weight="600" text-anchor="middle" fill="#0b0b0b">86.4%</text>
-<text x="170.3" y="362.0" font-size="12" text-anchor="middle" fill="#52514e">no keyterm list</text>
+<text x="141.3" y="118.8" font-size="11.5" font-weight="600" text-anchor="middle" fill="#0b0b0b">86%</text>
+<path d="M171.3,342.0 V130.1 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#e34948"/>
+<text x="199.3" y="119.1" font-size="11.5" font-weight="600" text-anchor="middle" fill="#0b0b0b">86%</text>
+<text x="170.3" y="362.0" font-size="12" text-anchor="middle" fill="#52514e">we gave it</text>
+<text x="170.3" y="377.0" font-size="12" text-anchor="middle" fill="#52514e">no list</text>
 <path d="M338.0,342.0 V117.2 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#2a78d6"/>
-<text x="366.0" y="106.2" font-size="11.5" font-weight="600" text-anchor="middle" fill="#0b0b0b">91.5%</text>
-<path d="M396.0,342.0 V110.2 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#eb6834"/>
-<text x="424.0" y="99.2" font-size="11.5" font-weight="600" text-anchor="middle" fill="#0b0b0b">94.3%</text>
-<text x="395.0" y="362.0" font-size="12" text-anchor="middle" fill="#52514e">FULL list (all 50)</text>
+<text x="366.0" y="106.2" font-size="11.5" font-weight="600" text-anchor="middle" fill="#0b0b0b">92%</text>
+<path d="M396.0,342.0 V110.2 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#e34948"/>
+<text x="424.0" y="99.2" font-size="11.5" font-weight="600" text-anchor="middle" fill="#0b0b0b">94%</text>
+<text x="395.0" y="362.0" font-size="12" text-anchor="middle" fill="#52514e">we listed</text>
+<text x="395.0" y="377.0" font-size="12" text-anchor="middle" fill="#52514e">all 50 medicines</text>
 <path d="M562.7,342.0 V113.5 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#2a78d6"/>
-<text x="590.7" y="102.5" font-size="11.5" font-weight="600" text-anchor="middle" fill="#0b0b0b">93.0%</text>
-<path d="M620.7,342.0 V157.1 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#eb6834"/>
-<text x="648.7" y="146.1" font-size="11.5" font-weight="600" text-anchor="middle" fill="#0b0b0b">75.6%</text>
-<text x="619.7" y="362.0" font-size="12" text-anchor="middle" fill="#52514e">HALF list (one per pair)</text>
+<text x="590.7" y="102.5" font-size="11.5" font-weight="600" text-anchor="middle" fill="#0b0b0b">93%</text>
+<path d="M620.7,342.0 V157.1 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#e34948"/>
+<text x="648.7" y="146.1" font-size="11.5" font-weight="600" text-anchor="middle" fill="#0b0b0b">76%</text>
+<text x="619.7" y="362.0" font-size="12" text-anchor="middle" fill="#52514e">we listed only</text>
+<text x="619.7" y="377.0" font-size="12" text-anchor="middle" fill="#52514e">half of them</text>
 <line x1="58" y1="342" x2="732" y2="342" stroke="#8a8982" stroke-width="1"/>
-<rect x="58" y="405" width="11" height="11" rx="2.5" fill="#2a78d6"/>
-<text x="75" y="414" font-size="12" fill="#52514e">drug WAS on the list</text>
-<rect x="212.0" y="405" width="11" height="11" rx="2.5" fill="#eb6834"/>
-<text x="229.0" y="414" font-size="12" fill="#52514e">drug was NOT on the list</text>
-<text x="58" y="436.0" font-size="11.5" fill="#d03b3b" font-weight="600">With the half list, 4.5% of un-listed drugs were transcribed AS their listed look-alike. With no list: 0%.</text>
+<rect x="58" y="395" width="11" height="11" rx="2.5" fill="#2a78d6"/>
+<text x="75" y="404" font-size="12" fill="#52514e">medicines we listed</text>
+<rect x="205.39999999999998" y="395" width="11" height="11" rx="2.5" fill="#e34948"/>
+<text x="222.39999999999998" y="404" font-size="12" fill="#52514e">medicines we left out</text>
+<text x="58" y="432.0" font-size="11.5" fill="#d03b3b" font-weight="600">With only half listed, 4.5% of the left-out medicines came back as the name of a DIFFERENT real medicine - the</text>
+<text x="58" y="447.5" font-size="11.5" fill="#d03b3b" font-weight="600">one we had listed. With no list at all, that never happened once.</text>
 </g></svg>

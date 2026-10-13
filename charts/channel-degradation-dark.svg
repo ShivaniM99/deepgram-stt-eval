@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 450" width="760" height="450" role="img" aria-label="Drug names degrade with the phone channel. Drug-name accuracy by channel condition. A number measured on clean audio is not a number you can launch on.">
-<rect width="760" height="450" fill="#1a1a19"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 500" width="760" height="500" role="img" aria-label="The worse the phone line, the more medicine names it gets wrong. How often the medicine name came out right, on four qualities of audio.">
+<rect width="760" height="500" fill="#1a1a19"/>
 <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
-<text x="58" y="34" font-size="19" font-weight="650" fill="#ffffff">Drug names degrade with the phone channel</text>
-<text x="58" y="56" font-size="13" fill="#c3c2b7">Drug-name accuracy by channel condition. A number measured on clean audio is not a number you can launch on.</text>
+<text x="58" y="34" font-size="19" font-weight="650" fill="#ffffff">The worse the phone line, the more medicine names it gets wrong</text>
+<text x="58" y="56" font-size="13" fill="#c3c2b7">How often the medicine name came out right, on four qualities of audio.</text>
 <line x1="58" y1="342.0" x2="732" y2="342.0" stroke="#333331" stroke-width="1"/>
 <text x="48" y="346.0" font-size="11" text-anchor="end" fill="#8a8982">0</text>
 <line x1="58" y1="292.0" x2="732" y2="292.0" stroke="#333331" stroke-width="1"/>
@@ -15,29 +15,35 @@
 <text x="48" y="146.0" font-size="11" text-anchor="end" fill="#8a8982">80</text>
 <line x1="58" y1="92.0" x2="732" y2="92.0" stroke="#333331" stroke-width="1"/>
 <text x="48" y="96.0" font-size="11" text-anchor="end" fill="#8a8982">100</text>
-<path d="M85.2,342.0 V127.9 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#3987e5"/>
-<text x="113.2" y="116.9" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">87.2%</text>
-<path d="M143.2,342.0 V109.3 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#d95926"/>
-<text x="171.2" y="98.3" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">94.7%</text>
-<text x="142.2" y="362.0" font-size="12" text-anchor="middle" fill="#c3c2b7">clean 16 kHz</text>
-<path d="M253.8,342.0 V117.3 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#3987e5"/>
-<text x="281.8" y="106.3" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">91.5%</text>
-<path d="M311.8,342.0 V106.6 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#d95926"/>
-<text x="339.8" y="95.6" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">95.7%</text>
-<text x="310.8" y="362.0" font-size="12" text-anchor="middle" fill="#c3c2b7">VoIP + echo</text>
-<path d="M422.2,342.0 V130.6 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#3987e5"/>
-<text x="450.2" y="119.6" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">86.2%</text>
-<path d="M480.2,342.0 V112.0 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#d95926"/>
-<text x="508.2" y="101.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">93.6%</text>
-<text x="479.2" y="362.0" font-size="12" text-anchor="middle" fill="#c3c2b7">telephone 8 kHz</text>
-<path d="M590.8,342.0 V143.9 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#3987e5"/>
-<text x="618.8" y="132.9" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">80.9%</text>
-<path d="M648.8,342.0 V127.9 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#d95926"/>
-<text x="676.8" y="116.9" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">87.2%</text>
-<text x="647.8" y="362.0" font-size="12" text-anchor="middle" fill="#c3c2b7">telephone + noise</text>
+<path d="M85.2,342.0 V127.9 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#9085e9"/>
+<text x="113.2" y="116.9" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">87%</text>
+<path d="M143.2,342.0 V109.3 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#008300"/>
+<text x="171.2" y="98.3" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">95%</text>
+<text x="142.2" y="362.0" font-size="12" text-anchor="middle" fill="#c3c2b7">studio</text>
+<text x="142.2" y="377.0" font-size="12" text-anchor="middle" fill="#c3c2b7">quality</text>
+<path d="M253.8,342.0 V117.3 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#9085e9"/>
+<text x="281.8" y="106.3" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">91%</text>
+<path d="M311.8,342.0 V106.6 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#008300"/>
+<text x="339.8" y="95.6" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">96%</text>
+<text x="310.8" y="362.0" font-size="12" text-anchor="middle" fill="#c3c2b7">internet</text>
+<text x="310.8" y="377.0" font-size="12" text-anchor="middle" fill="#c3c2b7">call</text>
+<path d="M422.2,342.0 V130.6 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#9085e9"/>
+<text x="450.2" y="119.6" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">86%</text>
+<path d="M480.2,342.0 V112.0 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#008300"/>
+<text x="508.2" y="101.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">94%</text>
+<text x="479.2" y="362.0" font-size="12" text-anchor="middle" fill="#c3c2b7">normal</text>
+<text x="479.2" y="377.0" font-size="12" text-anchor="middle" fill="#c3c2b7">phone call</text>
+<path d="M590.8,342.0 V143.9 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#9085e9"/>
+<text x="618.8" y="132.9" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">81%</text>
+<path d="M648.8,342.0 V127.9 a4,4 0 0 1 4,-4 h48.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#008300"/>
+<text x="676.8" y="116.9" font-size="11.5" font-weight="600" text-anchor="middle" fill="#ffffff">87%</text>
+<text x="647.8" y="362.0" font-size="12" text-anchor="middle" fill="#c3c2b7">noisy</text>
+<text x="647.8" y="377.0" font-size="12" text-anchor="middle" fill="#c3c2b7">phone call</text>
 <line x1="58" y1="342" x2="732" y2="342" stroke="#8a8982" stroke-width="1"/>
-<rect x="58" y="405" width="11" height="11" rx="2.5" fill="#3987e5"/>
-<text x="75" y="414" font-size="12" fill="#c3c2b7">no keyterm list</text>
-<rect x="179.0" y="405" width="11" height="11" rx="2.5" fill="#d95926"/>
-<text x="196.0" y="414" font-size="12" fill="#c3c2b7">full keyterm list</text>
+<rect x="58" y="395" width="11" height="11" rx="2.5" fill="#9085e9"/>
+<text x="75" y="404" font-size="12" fill="#c3c2b7">without a word list</text>
+<rect x="205.39999999999998" y="395" width="11" height="11" rx="2.5" fill="#008300"/>
+<text x="222.39999999999998" y="404" font-size="12" fill="#c3c2b7">with a full word list</text>
+<text x="58" y="432.0" font-size="11.5" fill="#d03b3b" font-weight="600">Testing on studio-quality audio would have made this look better than a real phone line ever is. The full word</text>
+<text x="58" y="447.5" font-size="11.5" fill="#d03b3b" font-weight="600">list helps, but not enough to reach the 98% this job needs.</text>
 </g></svg>

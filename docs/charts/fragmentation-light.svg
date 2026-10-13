@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 450" width="760" height="450" role="img" aria-label="Real speech splits far more than synthetic speech. Share of requests arriving as more than one transcript segment, at endpointing=300 ms.">
-<rect width="760" height="450" fill="#fcfcfb"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 500" width="760" height="500" role="img" aria-label="A real person gets cut off mid-request far more often. How often one spoken request was chopped into two or more pieces, because the speaker paused.">
+<rect width="760" height="500" fill="#fcfcfb"/>
 <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
-<text x="58" y="34" font-size="19" font-weight="650" fill="#0b0b0b">Real speech splits far more than synthetic speech</text>
-<text x="58" y="56" font-size="13" fill="#52514e">Share of requests arriving as more than one transcript segment, at endpointing=300 ms.</text>
+<text x="58" y="34" font-size="19" font-weight="650" fill="#0b0b0b">A real person gets cut off mid-request far more often</text>
+<text x="58" y="56" font-size="13" fill="#52514e">How often one spoken request was chopped into two or more pieces, because the speaker paused.</text>
 <line x1="58" y1="342.0" x2="732" y2="342.0" stroke="#e4e3de" stroke-width="1"/>
 <text x="48" y="346.0" font-size="11" text-anchor="end" fill="#8a8982">0</text>
 <line x1="58" y1="292.0" x2="732" y2="292.0" stroke="#e4e3de" stroke-width="1"/>
@@ -15,15 +15,15 @@
 <text x="48" y="146.0" font-size="11" text-anchor="end" fill="#8a8982">80</text>
 <line x1="58" y1="92.0" x2="732" y2="92.0" stroke="#e4e3de" stroke-width="1"/>
 <text x="48" y="96.0" font-size="11" text-anchor="end" fill="#8a8982">100</text>
-<path d="M166.5,342.0 V251.0 a4,4 0 0 1 4,-4 h112.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#2a78d6"/>
+<path d="M166.5,342.0 V251.0 a4,4 0 0 1 4,-4 h112.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#eb6834"/>
 <text x="226.5" y="238.0" font-size="17" font-weight="700" text-anchor="middle" fill="#0b0b0b">38%</text>
-<text x="226.5" y="362.0" font-size="12" text-anchor="middle" fill="#52514e">synthetic voices</text>
-<text x="226.5" y="377.0" font-size="12" text-anchor="middle" fill="#52514e">(what most evals use)</text>
-<path d="M503.5,342.0 V111.0 a4,4 0 0 1 4,-4 h112.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#eb6834"/>
+<text x="226.5" y="362.0" font-size="12" text-anchor="middle" fill="#52514e">computer voices</text>
+<text x="226.5" y="377.0" font-size="12" text-anchor="middle" fill="#52514e">(what most tests use)</text>
+<path d="M503.5,342.0 V111.0 a4,4 0 0 1 4,-4 h112.0 a4,4 0 0 1 4,4 V342.0 Z" fill="#1baf7a"/>
 <text x="563.5" y="98.0" font-size="17" font-weight="700" text-anchor="middle" fill="#0b0b0b">94%</text>
-<text x="563.5" y="362.0" font-size="12" text-anchor="middle" fill="#52514e">a real human voice</text>
+<text x="563.5" y="362.0" font-size="12" text-anchor="middle" fill="#52514e">a real person</text>
 <text x="563.5" y="377.0" font-size="12" text-anchor="middle" fill="#52514e">(16 recordings)</text>
 <line x1="58" y1="342" x2="732" y2="342" stroke="#8a8982" stroke-width="1"/>
-<text x="58" y="421.5" font-size="11.5" fill="#52514e">A split request delivers the drug name first and the prescription number second. Acting on the first half looks</text>
-<text x="58" y="436.0" font-size="11.5" fill="#52514e">like acting on a complete request.</text>
+<text x="58" y="414.0" font-size="11.5" fill="#52514e">Being cut in half means the medicine name arrives first and the prescription number arrives separately a moment</text>
+<text x="58" y="429.5" font-size="11.5" fill="#52514e">later. The first half looks like a complete request, so it is easy to act on by mistake.</text>
 </g></svg>

@@ -9,38 +9,39 @@ This repo is the apparatus for answering that. It is not a benchmark and not a
 demo — it is a gate the customer keeps and runs on every model version, config
 change and SDK bump.
 
-### ▶ [Listen to the failures and read the results](https://shivanim99.github.io/deepgram-stt-eval/)
+### ▶ [Hear it go wrong — results, in plain language](https://shivanim99.github.io/deepgram-stt-eval/)
 
-Verdict: **NO-GO**, on two blocking issues. Nova-3 is accurate enough and never
-invents words; two things about *how you connect it* would still have caused harm.
+Verdict: **not ready**, on two counts. It hears prescription numbers perfectly
+(188 of them, zero errors) and never invents words on silence or hold music.
+But similar medicine names get swapped for each other, and one "helpful"
+setting made that worse.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="charts/keyterm-false-trigger-dark.svg">
-  <img src="charts/keyterm-false-trigger-light.svg" alt="Drug-name accuracy by whether the spoken drug was on the keyterm boost list. With no list, 86.5% and 86.4%. With the full list, 91.5% and 94.3%. With half a list, listed drugs rise to 93.0% while unlisted drugs fall to 75.6%.">
+  <img src="charts/keyterm-false-trigger-light.svg" alt="Bar chart. With no word list, medicines score 86% whether listed or not. With all 50 listed, 92% and 94%. With only half listed, the listed medicines reach 93% while the ones left out drop to 76%.">
 </picture>
 
-**A partial keyterm list is worse than no list.** Boosting one member of each
-confusable drug pair -- what happens naturally if a pharmacy lists its best
-sellers -- raised accuracy on listed drugs by 6.5 points and dropped their
-unlisted partners by 10.8. All eight cross-confusions ran from the unlisted drug
-*toward* the listed one, never the reverse, and with no list there were zero. A
-recall-only evaluation would have scored that arm as an improvement and shipped
-it.
+**Half a list is worse than no list.** You can give the system a list of medicine
+names to listen out for. Listing *all* of them helps. Listing *half* -- what a
+pharmacy would naturally do, listing its best sellers -- made the medicines left
+off get worse, and start coming back as the names of the ones on it. Every one of
+those swaps went in that direction, never the reverse; with no list it never
+happened once. A test that only looked at the listed medicines would have seen
+them improve and called it a success.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="charts/fragmentation-dark.svg">
-  <img src="charts/fragmentation-light.svg" alt="Share of requests arriving as more than one transcript segment: 38% for synthetic voices, 94% for a real human voice.">
+  <img src="charts/fragmentation-light.svg" alt="Bar chart. Computer voices had a request split into pieces 38% of the time; a real person 94% of the time.">
 </picture>
 
-**Real speech splits far more than synthetic speech.** People pause in the middle
-of a seven-digit number, so 94% of real requests arrived in more than one
-segment -- 88% even at a one-second endpointing threshold. The first segment
-carries the drug name and the second the prescription number, so anything acting
-on one final holds half a request that looks whole.
+**Real people get cut off mid-request; computer voices mostly don't.** The system
+decides you have finished talking when you pause, and people pause in the middle
+of a seven-digit number -- so the medicine name arrives first and the prescription
+number separately. The first half looks like a whole request. No setting fixed it.
+Testing only on computer voices would have reported this at a third its real size.
 
-Also measured: **zero fabrication** on all 24 non-speech clips (silence, hold
-music, DTMF, dial tone, line noise, crosstalk) in all three configurations, and
-**100% exact match** on 188 prescription numbers across every channel condition.
+Also measured: **zero made-up words** across 24 no-speech recordings (silence, hold
+music, keypad tones, dial tone, hiss, background chatter) under every setting.
 
 Full results: [FINDINGS.md](FINDINGS.md) in plain language,
 [`reports/launch_readiness.md`](reports/launch_readiness.md) technical,

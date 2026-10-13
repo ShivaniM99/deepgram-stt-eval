@@ -3,8 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Deepgram STT launch readiness — pharmacy refill line</title>
-<meta name="description" content="A launch-readiness evaluation of Deepgram Nova-3 for a pharmacy refill phone line: entity accuracy, hallucination, keyterm false-triggering and endpointing. Listen to the failures.">
+<title>Can a computer take prescription refill calls?</title>
+<meta name="description" content="I tested whether speech recognition is good enough for a pharmacy phone line. It hears prescription numbers perfectly and never invents words -- but it swaps similar medicine names for each other, and one 'helpful' setting made things worse. Listen to it happen.">
+<meta property="og:title" content="Can a computer take prescription refill calls?">
+<meta property="og:description" content="648 recordings, $0.93, and two problems worth catching before launch. You can hear them.">
+<meta property="og:type" content="article">
 <style>
   :root{
     color-scheme: light;
@@ -84,163 +87,195 @@
 <div class="wrap">
 
 <header>
-  <div class="badge">NO-GO &mdash; 2 blocking issues</div>
-  <h1>Is Deepgram good enough for a pharmacy refill line?</h1>
+  <div class="badge">NOT READY YET &mdash; 2 things to fix first</div>
+  <h1>Can a computer take prescription refill calls?</h1>
   <p class="lede">
-    A pre-launch evaluation of Deepgram Nova&#8209;3 on 648 audio clips &mdash; synthetic,
-    real-voice, and silence. It is accurate enough and it never invents words.
-    Two things about <em>how you connect it</em> would still have caused harm.
+    A pharmacy wants a phone line where patients call to refill their medicines.
+    Before switching it on, somebody has to check whether the speech recognition
+    is good enough &mdash; and how you&rsquo;d know if it stopped being good enough.
+    I tested it on 648 recordings. Here is what happened.
   </p>
   <p>
-    <a class="btn" href="https://github.com/ShivaniM99/deepgram-stt-eval">The harness on GitHub</a>
-    <a class="btn ghost" href="https://github.com/ShivaniM99/deepgram-stt-eval/blob/main/reports/MEMO.md">Customer memo</a>
-    <a class="btn ghost" href="https://github.com/ShivaniM99/deepgram-stt-eval/blob/main/reports/launch_readiness.md">Full report</a>
+    <a class="btn" href="#hear">Hear it go wrong</a>
+    <a class="btn ghost" href="https://github.com/ShivaniM99/deepgram-stt-eval">The code</a>
+    <a class="btn ghost" href="https://github.com/ShivaniM99/deepgram-stt-eval/blob/main/reports/MEMO.md">One-page summary</a>
   </p>
   <p class="meta">
-    648 clips &middot; 67 minutes of audio &middot; 4 channel conditions &middot;
-    total API spend <strong>$0.93</strong> &middot; by
+    648 recordings &middot; 67 minutes of audio &middot; 4 qualities of phone line &middot;
+    total cost to run <strong>$0.93</strong> &middot; by
     <a href="https://github.com/ShivaniM99">Shivani Madan</a>
   </p>
 </header>
 
-<h2>Hear the failures</h2>
-<p class="sub">Every clip below is synthesized, so you can regenerate all of it from the
-repository. Press play, then read what came back.</p>
+<h2>The short version</h2>
+<div class="card">
+  <p><strong>The good news.</strong> It hears prescription numbers perfectly &mdash;
+  188 of them, not one mistake. And it never makes things up: played silence,
+  hold music and keypad beeps, it stayed quiet every single time. Some systems
+  invent whole sentences out of hold music.</p>
+  <p><strong>The problem.</strong> Medicine names that sound alike get swapped for
+  each other. Not garbled into nonsense &mdash; swapped for <em>a different real
+  medicine</em>, which is far worse, because the result looks perfectly normal and
+  nobody downstream notices.</p>
+  <p><strong>The surprise.</strong> You can give the system a list of medicine names
+  to listen out for. Giving it <em>all</em> of them helps. Giving it <em>half</em> of
+  them &mdash; which is what a pharmacy would naturally do, listing its best
+  sellers &mdash; made the medicines left off the list get <em>worse</em>, and start
+  coming back as the names of the ones on it.</p>
+  <p style="margin-bottom:0"><strong>Neither problem means switching vendors.</strong>
+  Both are about how the phone system is built around the speech recognition.</p>
+</div>
+
+<h2 id="hear">Hear it go wrong</h2>
+<p class="sub">All of these are computer-generated voices, so anyone can recreate them
+from the code. Press play, then read what came back.</p>
 
 <div class="card">
-  <h3>1. The same audio. One config change. A different real drug.</h3>
-  <p class="sub">Telephone-quality audio, Australian English voice. Nothing about the
-  audio changes between these two rows &mdash; only whether a keyterm list was attached.</p>
+  <h3>1. The same recording. One setting changed. A different medicine.</h3>
+  <p class="sub">Nothing about the audio changes between these two results &mdash; only
+  whether the system was given a list of medicine names to listen for.</p>
   <audio controls preload="none" src="audio/A0020_telephony_8k_ulaw.mp3"></audio>
   <div class="rows">
-    <div class="row"><div class="tag">actually said</div>
+    <div class="row"><div class="tag">what was said</div>
       <div class="said">I'm calling about <mark class="ok">cyclosporine</mark> 100 milligrams. My date of birth is August nineteenth, nineteen forty one.</div></div>
-    <div class="row"><div class="tag">no keyterm list</div>
+    <div class="row"><div class="tag">no word list</div>
       <div class="said">I'm calling about <mark class="ok">cyclosporine</mark> one hundred milligrams. My date of birth is 08/19/1941.</div></div>
-    <div class="row"><div class="tag">half a keyterm list</div>
+    <div class="row"><div class="tag">half a word list</div>
       <div class="said">I'm calling about <mark class="bad">cycloserine</mark> one hundred milligrams. My date of birth is 08/19/1941.</div></div>
   </div>
-  <p class="verdict bad">Cycloserine is a real, dispensable tuberculosis drug. The sentence is
-  fluent and well-formed, so nothing downstream rejects it. Adding a partial keyterm list
-  caused this; with no list the same audio transcribed correctly.</p>
+  <p class="verdict bad">Cyclosporine is an anti-rejection drug for transplant patients.
+  Cycloserine treats tuberculosis. Both are real; both get dispensed. The sentence reads
+  perfectly, so nothing flags it. Adding a half-finished word list caused this &mdash;
+  with no list, the same recording came out right.</p>
 </div>
 
 <div class="card">
-  <h3>2. The same words, degraded down to a phone line</h3>
-  <p class="sub">Indian English voice, identical utterance, rendered at studio quality and
-  then through an 8&nbsp;kHz G.711 telephone channel.</p>
+  <h3>2. The same words, once in studio quality and once down a phone line</h3>
+  <p class="sub">Same speaker, same sentence. The second version has been put through a
+  normal telephone connection.</p>
   <audio controls preload="none" src="audio/A0016_clean_16k.mp3"></audio>
   <div class="rows">
-    <div class="row"><div class="tag">clean 16 kHz</div>
+    <div class="row"><div class="tag">studio quality</div>
       <div class="said">I'd like a refill on <mark class="ok">amiodarone</mark> two hundred milligrams. Prescription number 3562773.</div></div>
   </div>
   <audio controls preload="none" src="audio/A0016_telephony_8k_ulaw.mp3"></audio>
   <div class="rows">
-    <div class="row"><div class="tag">telephone 8 kHz</div>
+    <div class="row"><div class="tag">phone quality</div>
       <div class="said">I'd like a refill on <mark class="bad">Ami order on</mark> two hundred milligrams. Prescription number 3562773.</div></div>
-    <div class="row"><div class="tag">+ half keyterm list</div>
+    <div class="row"><div class="tag">+ half a word list</div>
       <div class="said">I'd like a refill on <mark class="bad">amlodipine</mark>. On two hundred milligrams. Prescription number 3562773.</div></div>
   </div>
-  <p class="verdict bad">"Ami order on" is obvious nonsense &mdash; a human would catch it.
-  "Amlodipine" is a blood-pressure medication, and nobody catches that. The prescription
-  number survived every condition.</p>
+  <p class="verdict bad">&ldquo;Ami order on&rdquo; is obvious gibberish &mdash; a pharmacist
+  would spot it immediately. &ldquo;Amlodipine&rdquo; is a blood-pressure tablet, and nobody
+  spots that. Notice the prescription number survived all three versions.</p>
 </div>
 
 <div class="card">
-  <h3>3. Audio with no speech in it at all</h3>
-  <p class="sub">Synthesized hold music. Some systems invent plausible sentences out of
-  this, which on a pharmacy line means a refill request with no patient behind it.</p>
+  <h3>3. A recording with nobody speaking at all</h3>
+  <p class="sub">Hold music. A real phone line is full of this &mdash; music, dial tone,
+  keypad beeps, background hiss.</p>
   <audio controls preload="none" src="audio/D_hold_music_0.mp3"></audio>
   <div class="rows">
-    <div class="row"><div class="tag">transcript</div>
-      <div class="said" style="color:var(--ink3)">(empty)</div></div>
+    <div class="row"><div class="tag">what it typed</div>
+      <div class="said" style="color:var(--ink3)">(nothing at all)</div></div>
   </div>
-  <p class="verdict good">Nothing returned &mdash; on all 24 non-speech clips, in all three
-  configurations. Silence, dial tone, keypad beeps, line hiss, crosstalk and music.
-  This is a genuine strength.</p>
+  <p class="verdict good">Nothing &mdash; on all 24 no-speech recordings, under every
+  setting. This matters more than it sounds: a system that invents a sentence out of
+  hold music creates a prescription request with no patient behind it, and there is
+  nobody to correct it.</p>
 </div>
 
-<h2>What the numbers say</h2>
+<h2>The three findings</h2>
 
 <figure>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="charts/keyterm-false-trigger-dark.svg">
-    <img src="charts/keyterm-false-trigger-light.svg" alt="Grouped bar chart. With no keyterm list, drug accuracy is 86.5% for drugs on the list and 86.4% for drugs off it. With the full list, 91.5% and 94.3%. With half a list, listed drugs rise to 93.0% while unlisted drugs fall to 75.6%.">
+    <img src="charts/keyterm-false-trigger-light.svg" alt="Bar chart. With no word list, medicines score 86% whether listed or not. With all 50 listed, 92% and 94%. With only half listed, the listed medicines reach 93% while the ones left out drop to 76%.">
   </picture>
-  <figcaption>The diagnostic arm boosted only one member of each confusable drug pair &mdash;
-  what happens naturally if a pharmacy lists its best sellers. Accuracy on listed drugs rose
-  6.5 points; accuracy on their unlisted partners fell 10.8. All eight cross-confusions ran
-  from the unlisted drug toward the listed one, never the reverse. A recall-only evaluation
-  would have scored this arm as an improvement and shipped it.</figcaption>
+  <figcaption><strong>Half a list is worse than no list.</strong> The medicines left off the
+  list didn&rsquo;t just get a bit worse &mdash; they started coming back as the names of
+  the medicines that <em>were</em> on it. Every single one of those swaps went in that
+  direction, never the other way. With no list at all, it never happened once. A normal
+  test would have looked only at the medicines on the list, seen them improve, and called
+  this a success.</figcaption>
 </figure>
 
 <figure>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="charts/fragmentation-dark.svg">
-    <img src="charts/fragmentation-light.svg" alt="Bar chart. Synthetic voices fragment 38% of requests; a real human voice fragments 94%.">
+    <img src="charts/fragmentation-light.svg" alt="Bar chart. Computer voices had a request split into pieces 38% of the time; a real person 94% of the time.">
   </picture>
-  <figcaption>Deepgram finalizes a transcript segment after a pause, and people pause in the
-  middle of reading a seven-digit number. No endpointing value fixed this &mdash; 88% were still
-  split at a one-second threshold. The synthetic tier understated it by 2.5&times;, which is the
-  clearest argument here for testing on real voices.</figcaption>
+  <figcaption><strong>Real people get cut off; computer voices mostly don&rsquo;t.</strong>
+  The system decides you&rsquo;ve finished talking when you pause &mdash; and people pause
+  in the middle of reading out a seven-digit number. So the medicine name arrives first,
+  and the prescription number arrives separately a moment later. The first half looks like
+  a complete request. I tried every setting; nothing fixed it. Had I tested only on
+  computer voices, I&rsquo;d have reported this problem as about a third its real size.</figcaption>
 </figure>
 
 <figure>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="charts/channel-degradation-dark.svg">
-    <img src="charts/channel-degradation-light.svg" alt="Grouped bar chart of drug-name accuracy across four channel conditions, with and without a full keyterm list. Accuracy falls from 87.2% on clean audio to 80.9% on a noisy telephone line without a list, and from 94.7% to 87.2% with one.">
+    <img src="charts/channel-degradation-light.svg" alt="Bar chart of how often the medicine name was right across four audio qualities, with and without a full word list. Without a list it falls from 87% on studio audio to 81% on a noisy phone line; with one, from 95% to 87%.">
   </picture>
-  <figcaption>A full keyterm list is worth having: it lifts telephone-channel drug accuracy
-  from 86.2% to 93.6%. It does not reach the 98% this use case needs, which is why the
-  recommendation is a spoken confirmation readback rather than a different vendor.</figcaption>
+  <figcaption><strong>Phone quality matters, and a full word list helps.</strong> It takes
+  a normal phone call from 86% to 94%. That is a real improvement and worth switching on
+  &mdash; it is just not the 98% this particular job needs, which is why the fix is to have
+  the system repeat the medicine name back to the caller rather than to go looking for a
+  different supplier.</figcaption>
 </figure>
 
-<h2>The launch gate</h2>
-<p>Thresholds are a starting proposal, each with its reasoning recorded in
-<a href="https://github.com/ShivaniM99/deepgram-stt-eval/blob/main/configs/gate.yaml"><code>gate.yaml</code></a>.
-The harness exits non-zero when a blocker fails, so it runs in CI on every model version.</p>
+<h2>The checklist, and whether it passed</h2>
+<p>I wrote down what &ldquo;good enough&rdquo; has to mean <em>before</em> looking at the
+results, with a reason for every number. The pharmacy would set its own. The test runs
+automatically and fails loudly if a future update makes any of this worse.</p>
 
 <table>
-  <thead><tr><th>Check</th><th>Observed</th><th>Required</th><th>Result</th></tr></thead>
+  <thead><tr><th>What was checked</th><th>Result</th><th>Needed</th><th></th></tr></thead>
   <tbody>
-    <tr><td>Drug cross-confusion rate</td><td class="num">0%</td><td class="num">0%</td><td class="pass">PASS</td></tr>
-    <tr><td>Drug-name accuracy</td><td class="num">93.6%</td><td class="num">&ge; 98%</td><td class="fail">FAIL</td></tr>
-    <tr><td>Rx number exact match</td><td class="num">100%</td><td class="num">&ge; 95%</td><td class="pass">PASS</td></tr>
-    <tr><td>Hallucination on non-speech</td><td class="num">0%</td><td class="num">0%</td><td class="pass">PASS</td></tr>
-    <tr><td>Date-of-birth accuracy</td><td class="num">97.0%</td><td class="num">&ge; 90%</td><td class="pass">PASS</td></tr>
-    <tr><td>Control WER regression</td><td class="num">0.07%</td><td class="num">&le; 2%</td><td class="pass">PASS</td></tr>
-    <tr><td>Finalization delay p95</td><td class="num">2016 ms</td><td class="num">&le; 2500 ms</td><td class="pass">PASS</td></tr>
-    <tr><td>Utterance fragmentation</td><td class="num">88%</td><td class="num">&le; 10%</td><td class="fail">FAIL</td></tr>
+    <tr><td>Swapped one real medicine for another</td><td class="num">never</td><td class="num">never</td><td class="pass">PASS</td></tr>
+    <tr><td>Got the medicine name right (phone quality)</td><td class="num">94%</td><td class="num">98%</td><td class="fail">FAIL</td></tr>
+    <tr><td>Got the prescription number right</td><td class="num">100%</td><td class="num">95%</td><td class="pass">PASS</td></tr>
+    <tr><td>Made something up when nobody spoke</td><td class="num">never</td><td class="num">never</td><td class="pass">PASS</td></tr>
+    <tr><td>Got the date of birth right</td><td class="num">97%</td><td class="num">90%</td><td class="pass">PASS</td></tr>
+    <tr><td>Made ordinary speech worse</td><td class="num">no</td><td class="num">no</td><td class="pass">PASS</td></tr>
+    <tr><td>Time from caller stopping to text appearing</td><td class="num">2.0 s</td><td class="num">2.5 s</td><td class="pass">PASS</td></tr>
+    <tr><td>Requests arriving in pieces</td><td class="num">88%</td><td class="num">10%</td><td class="fail">FAIL</td></tr>
   </tbody>
 </table>
 
 <h2>What would fix it</h2>
 <ul>
-  <li><strong>Read the drug name back and require confirmation.</strong> The 98% threshold is
-  only defensible because such a step exists; without it the bar must be higher.</li>
-  <li><strong>Buffer transcript segments; never act on one.</strong> Accumulate consecutive
-  finals and use <code>UtteranceEnd</code> to decide a caller has finished.</li>
-  <li><strong>Use the complete formulary in the keyterm list, or none of it.</strong></li>
-  <li><strong>Route low-confidence drug names to a person</strong> rather than accepting a wrong one.</li>
+  <li><strong>Have it read the medicine name back and wait for a yes.</strong> The 94% is
+  only acceptable if a mistake gets caught in the conversation. Without that step, roughly
+  one call in sixteen carries a wrong medicine name into the pharmacy&rsquo;s queue.</li>
+  <li><strong>Wait for the whole sentence before doing anything.</strong> Collect the
+  pieces and treat them as one request, rather than acting on the first piece that
+  arrives.</li>
+  <li><strong>Use the complete list of medicines, or none at all.</strong> Never a
+  partial one.</li>
+  <li><strong>Send uncertain medicine names to a human</strong> instead of guessing.</li>
 </ul>
 
-<h2>What this does not establish</h2>
+<h2>What this test cannot tell you</h2>
 <ul>
-  <li><strong>No real pharmacy call audio.</strong> That is protected health information. The
-  real-voice set is 16 clips in one voice &mdash; enough to show a problem exists, not to size it.</li>
-  <li><strong>Two assumptions were wrong in the same direction.</strong> The synthetic tier turned
-  out <em>harder</em> than real speech on word error rate and <em>easier</em> on fragmentation.
-  It is a stress test, not a proxy for real callers.</li>
-  <li><strong>Latency is client-observed</strong> from one machine, inclusive of network round
-  trip. Three earlier definitions of this metric were discarded as meaningless against the live
-  API; one returned negative three seconds.</li>
-  <li><strong>Single-turn only.</strong> No barge-in, multi-turn state or tool calling &mdash;
-  the Voice Agent API is out of scope here.</li>
+  <li><strong>No real pharmacy calls were used.</strong> Those are private medical records.
+  The real-voice recordings here are 16 clips in one person&rsquo;s voice &mdash; enough to
+  prove a problem exists, not enough to say how big it is across all callers.</li>
+  <li><strong>I was wrong twice about the computer voices.</strong> I assumed they would
+  make the results look better than reality. They made word accuracy look <em>worse</em>
+  and the cut-off problem look <em>smaller</em>. That is the main reason the real
+  recordings mattered.</li>
+  <li><strong>Timings were measured from one laptop</strong> on one internet connection,
+  so they include the time spent travelling to the servers and back.</li>
+  <li><strong>Only single sentences were tested</strong> &mdash; no back-and-forth
+  conversation, no interrupting.</li>
 </ul>
 
 <div class="foot">
-  <p>Built as an evaluation exercise. Drug pairs are from the ISMP List of Confused Drug Names;
-  the control set is LibriSpeech (CC&nbsp;BY&nbsp;4.0). All audio on this page is synthesized.</p>
+  <p>The medicine pairs are taken from a published list of names that pharmacists really do
+  mix up, kept by the Institute for Safe Medication Practices. Every recording on this page
+  was generated by computer; nothing here is a real patient or a real call.</p>
   <p><a href="https://github.com/ShivaniM99/deepgram-stt-eval">github.com/ShivaniM99/deepgram-stt-eval</a></p>
 </div>
 
