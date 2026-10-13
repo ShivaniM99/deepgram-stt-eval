@@ -1,13 +1,13 @@
 # Launch readiness: pharmacy refill line (Deepgram Nova-3)
 
-*Generated 2026-10-12 by `dgeval`. Every number here is reproducible from the cached responses in `.cache/` -- see README.*
+*Generated 2026-10-12 by `dgeval`. Every number here is reproducible from the cached responses in `.cache/`. See README.*
 
 ## Verdict: **NO-GO**
 
 Blocking issues:
 
-- **drug_accuracy** — measured `0.9362`, requires `>= 0.98`
-- **utterance_fragmentation_rate** — measured `0.8800`, requires `<= 0.1`
+- **drug_accuracy**: measured `0.9362`, requires `>= 0.98`
+- **utterance_fragmentation_rate**: measured `0.8800`, requires `<= 0.1`
 
 ## Launch gate
 
@@ -68,14 +68,14 @@ The clean column is the reference; the telephony columns are the real transport.
 
 | probe | clips | fabricated | example output |
 |---|---|---|---|
-| babble | 3 | 0 | — |
-| dial_tone | 3 | 0 | — |
-| digital_silence | 3 | 0 | — |
-| dtmf_sequence | 3 | 0 | — |
-| hold_music | 3 | 0 | — |
-| line_noise | 3 | 0 | — |
-| ring_tone | 3 | 0 | — |
-| room_tone | 3 | 0 | — |
+| babble | 3 | 0 | none |
+| dial_tone | 3 | 0 | none |
+| digital_silence | 3 | 0 | none |
+| dtmf_sequence | 3 | 0 | none |
+| hold_music | 3 | 0 | none |
+| line_noise | 3 | 0 | none |
+| ring_tone | 3 | 0 | none |
+| room_tone | 3 | 0 | none |
 
 ## Keyterm prompting: lift and cost
 
@@ -85,7 +85,7 @@ The clean column is the reference; the telephony columns are the real transport.
 | keyterm_all | 8.47% | 2.83% | 92.82% | 0.00% | 100.00% |
 | keyterm_half | 9.29% | 2.80% | 84.84% | 2.13% | 100.00% |
 
-The `keyterm_half` arm boosts only one member of each ISMP confusable pair. If boosted-half accuracy rises while the withheld half falls below baseline, the boost is moving probability between confusable terms rather than improving acoustic discrimination — a result a recall-only evaluation would report as an improvement. See `src/dgeval/experiments/keyterm.py`.
+The `keyterm_half` arm boosts only one member of each ISMP confusable pair. If boosted-half accuracy rises while the withheld half falls below baseline, the boost is moving probability between confusable terms rather than improving acoustic discrimination, a result a recall-only evaluation would report as an improvement. See `src/dgeval/experiments/keyterm.py`.
 
 ## Endpointing: finalization delay against fragmentation
 
@@ -99,7 +99,7 @@ Network floor from the test machine: p50 80 ms, min 76 ms. All latencies below a
 | 500 ms | 20 | 954 | 2016 | 2276 | 1042 | 45% | 1.4 |
 | 1000 ms | 20 | 1210 | 2034 | 2287 | 1039 | 45% | 1.4 |
 
-**Recommended: `endpointing=None`** — no swept value held fragmentation at or below 10% (best was 45% if measured). Utterances in this corpus contain internal pauses long enough to finalize on, so the knob alone cannot keep them whole -- the call flow must reassemble consecutive finals before acting, or utterance_end_ms must be used to delimit turns.
+**Recommended: `endpointing=None`** because it is the no swept value held fragmentation at or below 10% (best was 45% if measured). Utterances in this corpus contain internal pauses long enough to finalize on, so the knob alone cannot keep them whole. The call flow must reassemble consecutive finals before acting, or utterance_end_ms must be used to delimit turns..
 
 ### Fragmentation is worse on real speech than on synthetic
 
@@ -112,7 +112,7 @@ The 45% figure above comes from the synthetic tier. It was checked against real 
 | C_real_domain | 300 ms | 94% | 2.1 | 706 ms |
 | C_real_domain | 1000 ms | 88% | 1.9 | 1396 ms |
 
-A human reading a long sentence containing a seven-digit number pauses naturally and variably; synthesis is metronomic. On real speech, **94% of utterances arrive in more than one piece at `endpointing=300ms`, and 88% still do at 1000ms** — so nearly every real caller will be split. The synthetic tier understated this by roughly 2.5x, which is the clearest argument in this report for why a real-voice tier is not optional.
+A human reading a long sentence containing a seven-digit number pauses naturally and variably; synthesis is metronomic. On real speech, **94% of utterances arrive in more than one piece at `endpointing=300ms`, and 88% still do at 1000ms**, so nearly every real caller will be split. The synthetic tier understated this by roughly 2.5x, which is the clearest argument in this report for why a real-voice tier is not optional.
 
 **Architectural consequence:** the call flow cannot act on individual finals. It must buffer consecutive finals and use `UtteranceEnd` / `utterance_end_ms` to delimit a caller turn. No value of `endpointing` makes acting-per-final safe.
 
@@ -164,5 +164,5 @@ List Pay-As-You-Go rates; a Growth commitment discounts these by roughly 10-15%.
 
 5. Pilot on consented recordings from the real line before full rollout, and re-measure tier C against it.
 
-6. Phase 2: evaluate the Voice Agent API — tool-call accuracy, groundedness on out-of-scope requests, numeric readback, and barge-in.
+6. Phase 2: evaluate the Voice Agent API for tool-call accuracy, groundedness on out-of-scope requests, numeric readback, and barge-in.
 

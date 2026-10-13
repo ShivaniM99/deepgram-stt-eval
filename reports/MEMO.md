@@ -1,6 +1,6 @@
 # Refill line: pre-launch assessment
 
-**To:** Northside Pharmacy — operations and engineering
+**To:** Northside Pharmacy, operations and engineering
 **From:** Shivani Madan
 **Re:** Is Deepgram Nova-3 ready for the inbound refill line?
 **Date:** 12 October 2026
@@ -10,7 +10,7 @@
 ## Recommendation: do not launch yet. Two fixes, both in the call flow.
 
 Nova-3 is accurate enough for this use case and does not invent words. Neither
-blocker is a reason to look at another vendor — both are things the integration
+blocker is a reason to look at another vendor. Both are things the integration
 has to do differently.
 
 | | |
@@ -28,8 +28,8 @@ Everything else passed, including the two tests I expected to be the problem.
 using drug pairs from the ISMP Confused Drug Names list; 40 LibriSpeech clips as
 a control on my own measurement; 16 recordings of a real human voice reading the
 hardest lines; and 24 clips of audio with no speech in it at all. Every speech
-clip was re-rendered through four channels — clean, 8 kHz telephone, telephone
-plus noise, and VoIP with echo — because a number measured on clean audio is not
+clip was re-rendered through four channels: clean, 8 kHz telephone, telephone
+plus noise, and VoIP with echo. A number measured on clean audio is not
 a number you can launch on.
 
 I scored word error rate for comparability, but the launch decision rests on
@@ -47,7 +47,7 @@ Total API cost: $0.93.
 condition, zero errors. This surprised me and it is the strongest result here.
 
 **No fabrication: 0 of 24.** Hold music, dial tone, touch tones, line noise,
-crosstalk, digital silence — Nova-3 returned nothing every time. Some systems
+crosstalk, digital silence. Nova-3 returned nothing every time. Some systems
 invent plausible sentences out of hold music, which on this line would mean a
 refill request with no caller behind it. Nova-3 does not.
 
@@ -60,13 +60,13 @@ identity check fails and the caller is asked to repeat.
 
 **Drug names degrade with the channel.** 86.2% on telephone audio at baseline,
 87.2% with keyterm prompting on, 80.9% once noise is added. Keyterm prompting
-for your formulary is worth turning on — it lifts telephone accuracy from 86.2%
+for your formulary is worth turning on, because it lifts telephone accuracy from 86.2%
 to 93.6%. It does not get you to 98%.
 
 **A partial keyterm list is worse than no list.** This is the finding I would
 most want you to act on. I tested boosting only one member of each confusable
 pair, which is what happens naturally if you list your top sellers. Accuracy on
-the listed drugs rose 6.5 points — and accuracy on their unlisted partners fell
+the listed drugs rose 6.5 points, and accuracy on their unlisted partners fell
 10.8 points, with 4.5% of them transcribed *as the listed drug*:
 
 | spoken | transcribed as | times |
@@ -109,12 +109,12 @@ number is in the second.
 
 ## What to monitor after launch
 
-- **Drug cross-confusion rate** — target zero. Sample transcripts weekly against
+- **Drug cross-confusion rate.** Target zero. Sample transcripts weekly against
   what was actually dispensed. This is the only metric here that can cause harm.
-- **Confirmation-rejection rate** — how often callers correct the readback. A
+- **Confirmation-rejection rate.** How often callers correct the readback. A
   rise means accuracy is drifting before any error reaches a pharmacist.
-- **Segments per caller turn** — if this climbs, your buffering has broken.
-- **Escalation rate to a human** — your real automation rate, and the number to
+- **Segments per caller turn.** If this climbs, your buffering has broken.
+- **Escalation rate to a human.** Your real automation rate, and the number to
   watch when anyone proposes relaxing a threshold.
 - **Accuracy by accent.** Baseline drug accuracy ranged from 97.2% to 82.1%
   across the accents I could synthesize. Your caller population is not mine;
@@ -124,7 +124,7 @@ number is in the second.
 
 ## What this does not tell you
 
-I had no real pharmacy call audio — that is protected health information. My
+I had no real pharmacy call audio, because that is protected health information. My
 real-voice set is 16 clips in one voice, which is enough to show that a problem
 exists and not enough to size it. **Before full rollout, run this same harness
 over consented recordings from your own line.** The thresholds I used are my

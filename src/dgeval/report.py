@@ -126,7 +126,7 @@ def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> 
     w(f"# Launch readiness: pharmacy refill line (Deepgram Nova-3)\n")
     w(f"*Generated {date.today().isoformat()} by `dgeval`. "
       f"Every number here is reproducible from the cached responses in "
-      f"`.cache/` -- see README.*\n")
+      f"`.cache/`. See README.*\n")
 
     # --- verdict -----------------------------------------------------------
     w(f"## Verdict: **{vd['decision']}**\n")
@@ -134,13 +134,13 @@ def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> 
         w("Blocking issues:\n")
         for name in vd["blockers_failed"]:
             c = next(c for c in checks if c.name == name)
-            w(f"- **{name}** — measured `{_num(c.observed, 4)}`, requires `{c.bound}`")
+            w(f"- **{name}**: measured `{_num(c.observed, 4)}`, requires `{c.bound}`")
         w("")
     if vd["warnings"]:
         w("Conditions to accept before launch:\n")
         for name in vd["warnings"]:
             c = next(c for c in checks if c.name == name)
-            w(f"- {name} — measured `{_num(c.observed, 4)}`, target `{c.bound}`")
+            w(f"- {name}: measured `{_num(c.observed, 4)}`, target `{c.bound}`")
         w("")
     if vd["skipped"]:
         w(f"**Not measured in this run** (reported as skipped, not as passing): "
@@ -232,7 +232,7 @@ def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> 
             for p, v in hall["by_probe"].items():
                 ex = (v.get("examples") or [""])[0]
                 ex = (ex[:70] + "...") if len(ex) > 70 else ex
-                w(f"| {p} | {v['n']} | {v['fabricated']} | {ex or '—'} |")
+                w(f"| {p} | {v['n']} | {v['fabricated']} | {ex or 'none'} |")
             w("")
 
     # --- keyterm -----------------------------------------------------------
@@ -252,7 +252,7 @@ def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> 
         w("\nThe `keyterm_half` arm boosts only one member of each ISMP "
           "confusable pair. If boosted-half accuracy rises while the withheld "
           "half falls below baseline, the boost is moving probability between "
-          "confusable terms rather than improving acoustic discrimination — "
+          "confusable terms rather than improving acoustic discrimination, "
           "a result a recall-only evaluation would report as an improvement. "
           "See `src/dgeval/experiments/keyterm.py`.\n")
 
@@ -275,7 +275,7 @@ def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> 
               f"{_pct(p['fragmentation_rate'], 0)} | {p['mean_segments']:.1f} |")
         rec = ep.get("recommendation") or {}
         w(f"\n**Recommended: `endpointing={rec.get('recommended_endpointing_ms')}`** "
-          f"— {rec.get('reason')}\n")
+          f"because it is the {rec.get('reason')}.\n")
         if rec.get("rejected"):
             w("Faster settings were rejected for splitting utterances:\n")
             for r in rec["rejected"]:
@@ -286,7 +286,7 @@ def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> 
             w("\nFragmentation matters disproportionately here because the Rx "
               "number falls at the end of the utterance. A component acting on "
               "the first final of a split request holds a drug name with no "
-              "prescription attached — which looks like a complete, "
+              "prescription attached, which looks like a complete, "
               "well-formed request rather than an error.\n")
 
     # --- fragmentation: synthetic vs real ----------------------------------
@@ -306,7 +306,7 @@ def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> 
         w("\nA human reading a long sentence containing a seven-digit number "
           "pauses naturally and variably; synthesis is metronomic. On real "
           "speech, **94% of utterances arrive in more than one piece at "
-          "`endpointing=300ms`, and 88% still do at 1000ms** — so nearly every "
+          "`endpointing=300ms`, and 88% still do at 1000ms**, so nearly every "
           "real caller will be split. The synthetic tier understated this by "
           "roughly 2.5x, which is the clearest argument in this report for "
           "why a real-voice tier is not optional.\n")
@@ -381,7 +381,7 @@ def render(data: dict[str, Any] | None = None, gate_path: str | None = None) -> 
     w("4. Run this gate in CI against every model version bump.\n")
     w("5. Pilot on consented recordings from the real line before full rollout, "
       "and re-measure tier C against it.\n")
-    w("6. Phase 2: evaluate the Voice Agent API — tool-call accuracy, "
+    w("6. Phase 2: evaluate the Voice Agent API for tool-call accuracy, "
       "groundedness on out-of-scope requests, numeric readback, and barge-in.\n")
 
     return "\n".join(L) + "\n"

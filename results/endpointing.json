@@ -69,7 +69,7 @@
   ],
   "recommendation": {
     "recommended_endpointing_ms": null,
-    "reason": "no swept value held fragmentation at or below 10% (best was 45% if measured). Utterances in this corpus contain internal pauses long enough to finalize on, so the knob alone cannot keep them whole -- the call flow must reassemble consecutive finals before acting, or utterance_end_ms must be used to delimit turns.",
+    "reason": "no swept value held fragmentation at or below 10% (best was 45% if measured). Utterances in this corpus contain internal pauses long enough to finalize on, so the knob alone cannot keep them whole. The call flow must reassemble consecutive finals before acting, or utterance_end_ms must be used to delimit turns.",
     "fragmentation_by_setting": [
       {
         "endpointing_ms": 10,

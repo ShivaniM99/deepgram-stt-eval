@@ -259,7 +259,7 @@ def main() -> None:
              ("medicines we left out", withheld)],
             t, list(PAIRS["listed"]["light" if t["surface"] == "#fcfcfb" else "dark"]),
             note=(f"With only half listed, {xconf:.1f}% of the left-out medicines came "
-                  f"back as the name of a DIFFERENT real medicine - the one we had "
+                  f"back as the name of a DIFFERENT real medicine, the one we had "
                   f"listed. With no list at all, that never happened once."),
         ),
         "channel-degradation": lambda t: grouped_bars(

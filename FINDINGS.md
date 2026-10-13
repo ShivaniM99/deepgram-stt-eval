@@ -13,7 +13,7 @@ and the customer-facing version is in [`reports/MEMO.md`](reports/MEMO.md).
 ## The one-sentence version
 
 Deepgram's recognition is good enough for this job, but two things about *how
-you connect it* would have caused real harm — and I only found them because I
+you connect it* would have caused real harm, and I only found them because I
 checked my own test equipment as carefully as I checked Deepgram.
 
 ---
@@ -24,8 +24,8 @@ checked my own test equipment as carefully as I checked Deepgram.
 
 Deepgram lets you hand it a list of words to listen out for, which is useful for
 drug names. Give it the whole list of 50 drugs and everything improves with no
-new errors. Give it *half* the list — exactly what a real pharmacy would do,
-listing their best sellers — and the drugs left off started being heard as the
+new errors. Give it *half* the list, which is exactly what a real pharmacy would do,
+listing their best sellers, and the drugs left off started being heard as the
 drugs that were on it.
 
 Eight times, a patient said one medicine and the transcript named a different
@@ -48,12 +48,12 @@ recordings this happened to **88%** of requests.
 
 The first piece says *"I'd like a refill on hydralazine, fifty milligrams."* The
 prescription number is in the second piece. A phone system acting on the first
-piece has a medicine and no prescription — which reads as a complete, sensible
+piece has a medicine and no prescription, which reads as a complete, sensible
 request.
 
 No setting fixes this. It has to be solved in how the phone system is built.
 
-### 3. It never makes things up — not once
+### 3. It never makes things up, not once
 
 24 clips containing no speech at all: silence, hold music, dial tone, keypad
 beeps, line hiss, background chatter. It returned nothing every single time.
@@ -69,7 +69,7 @@ are where the danger sits.
 
 ---
 
-## What I found about testing itself — the more valuable half
+## What I found about testing itself, the more valuable half
 
 ### 5. My synthetic voices misled me, in both directions
 
@@ -77,7 +77,7 @@ Most of the corpus used computer-generated voices. I assumed that would make
 things look *easier* than reality. It was wrong both ways:
 
 - Computer voices produced **more** word errors than a real person.
-- Computer voices produced **far fewer** interrupted sentences — 38% against 94%.
+- Computer voices produced **far fewer** interrupted sentences: 38% against 94%.
 
 Using only computer voices would have reported the interruption problem as
 roughly three times smaller than it is. Sixteen recordings of one real human

@@ -1,4 +1,4 @@
-# dgeval — launch-readiness eval harness for Deepgram STT
+# dgeval: launch-readiness eval harness for Deepgram STT
 
 A pharmacy wants a phone line that takes prescription refill requests. Before
 it goes live, somebody has to answer a specific question: **is the speech
@@ -6,10 +6,10 @@ recognition good enough, and how would we know if it stopped being good
 enough?**
 
 This repo is the apparatus for answering that. It is not a benchmark and not a
-demo — it is a gate the customer keeps and runs on every model version, config
+demo. It is a gate the customer keeps and runs on every model version, config
 change and SDK bump.
 
-### ▶ [Hear it go wrong — results, in plain language](https://shivanim99.github.io/deepgram-stt-eval/)
+### ▶ [Hear it go wrong: results in plain language](https://shivanim99.github.io/deepgram-stt-eval/)
 
 Verdict: **not ready**, on two counts. It hears prescription numbers perfectly
 (188 of them, zero errors) and never invents words on silence or hold music.
@@ -22,8 +22,8 @@ setting made that worse.
 </picture>
 
 **Half a list is worse than no list.** You can give the system a list of medicine
-names to listen out for. Listing *all* of them helps. Listing *half* -- what a
-pharmacy would naturally do, listing its best sellers -- made the medicines left
+names to listen out for. Listing *all* of them helps. Listing *half*, which is what a
+pharmacy would naturally do by listing its best sellers, made the medicines left
 off get worse, and start coming back as the names of the ones on it. Every one of
 those swaps went in that direction, never the reverse; with no list it never
 happened once. A test that only looked at the listed medicines would have seen
@@ -36,7 +36,7 @@ them improve and called it a success.
 
 **Real people get cut off mid-request; computer voices mostly don't.** The system
 decides you have finished talking when you pause, and people pause in the middle
-of a seven-digit number -- so the medicine name arrives first and the prescription
+of a seven-digit number, so the medicine name arrives first and the prescription
 number separately. The first half looks like a whole request. No setting fixed it.
 Testing only on computer voices would have reported this at a third its real size.
 
@@ -49,8 +49,8 @@ Full results: [FINDINGS.md](FINDINGS.md) in plain language,
 
 ```bash
 make setup      # venv + install
-make test       # verify the measurement logic -- no API key needed
-make corpus     # build the evaluation corpus -- no API key needed
+make test       # verify the measurement logic, no API key needed
+make corpus     # build the evaluation corpus, no API key needed
 make eval       # transcribe + score      (~$0.25)
 make keyterm    # keyterm lift AND cost   (~$0.75)
 make sweep      # endpointing curve       (~$0.05, runs at real time)
@@ -68,22 +68,22 @@ WER treats every word as equally important. On a pharmacy line it is not.
 
 | transcript | WER | outcome |
 |---|---|---|
-| "I need a refill on **hydroxyzine**, uh, number 4482109" | 12% | fine — every entity correct |
+| "I need a refill on **hydroxyzine**, uh, number 4482109" | 12% | fine, every entity correct |
 | "I need a refill on **hydralazine**, prescription 4482109" | 4% | **a dispensing-error pathway** |
 
 The second transcript scores three times better and is the dangerous one.
 `hydroxyzine` (an antihistamine) and `hydralazine` (a blood-pressure drug) are
 a documented pair on the ISMP Confused Drug Names list. The error is
-well-formed, plausible, and invisible to every downstream validation layer —
+well-formed, plausible, and invisible to every downstream validation layer:
 the output is a real drug that really exists and can really be dispensed.
 
 So this harness reports WER because it is comparable to published numbers, and
 makes **entity-level accuracy the thing the launch decision rests on**, with
 three severities kept apart:
 
-- `correct` — recognized
-- `miss` — mangled into something that is not a drug; a human will catch it
-- `cross_confusion` — recognized as a **different real drug** that is a
+- `correct`: recognized
+- `miss`: mangled into something that is not a drug; a human will catch it
+- `cross_confusion`: recognized as a **different real drug** that is a
   documented confusable of the true one; **nothing downstream catches this**
 
 Cross-confusion is tracked as its own metric with its own blocking threshold of
@@ -107,20 +107,20 @@ columns is the point.
 tone, line noise with mains hum, dial tone, ring tone, DTMF, on-hold music and
 crosstalk babble. Any word returned for audio with no speech is an insertion.
 Pure digital silence is the easy case and is included as a floor, not as the
-test — a real line is never digitally silent.
+test, because a real line is never digitally silent.
 
-**Keyterm prompting — the lift and the cost.** Three arms: no boost, all 50
+**Keyterm prompting: the lift and the cost.** Three arms: no boost, all 50
 drugs boosted, and only *one member of each confusable pair* boosted. The third
 arm is the diagnostic: if boosted-half accuracy rises while the withheld half
 drops below baseline, the boost is moving probability between confusable terms
-rather than improving acoustic discrimination — and a recall-only evaluation
+rather than improving acoustic discrimination, and a recall-only evaluation
 reports that as an improvement. A separate control threshold catches collateral
 WER damage on speech containing no pharmacy vocabulary at all.
 
-**Endpointing — the tradeoff curve, not a number.** `endpointing` is the knob
+**Endpointing: the tradeoff curve, not a number.** `endpointing` is the knob
 that sets what a caller feels as dead air, and latency can always be improved
 by lowering it. The cost is truncation: the endpoint fires inside a natural
-pause and the tail of the utterance is lost — and on this use case the tail is
+pause and the tail of the utterance is lost, and on this use case the tail is
 where the Rx number lives. The deliverable is the curve of endpoint latency
 against truncation rate, so the customer picks a point on it. The recommended
 setting is deliberately *not* the fastest one; it is the fastest one that does
@@ -149,7 +149,7 @@ apparatus is wrong, not the vendor.
 
 **Tier C is the one that matters most.** `make record` walks through a 16-line
 script and writes each clip straight to the correct filename; `make qc` then
-checks it. Lines are chosen adversarially — both halves of eight ISMP pairs —
+checks it. Lines are chosen adversarially, both halves of eight ISMP pairs,
 because the point of tier C is not coverage but putting a real human voice on
 the cases most likely to break.
 
@@ -157,7 +157,7 @@ Getting this tier clean took four passes, and the reasons are worth stating
 because none of them were visible without checking:
 
 - The keypress starting each recording was captured up to 10 dB LOUDER than
-  the speech. Detecting it afterwards does not work -- once a transient sits
+  the speech. Detecting it afterwards does not work. Once a transient sits
   within ~250 ms of speech, no threshold separates them without risking the
   first phoneme. The recorder counts in and discards a window instead, with
   the countdown deliberately longer than the discard so device-init latency
@@ -165,7 +165,7 @@ because none of them were visible without checking:
 - Recording over a Continuity iPhone microphone produced runs of exact zeros
   INTERRUPTING SPEECH, periodic at roughly 450 ms, on three clips. A gap like
   that causes a recognition error belonging to the capture path, not the
-  recognizer -- a false error in the one tier that anchors the report.
+  recognizer, a false error in the one tier that anchors the report.
   `make qc` now detects this; the built-in microphone has no wireless link and
   also measured better (33 dB SNR against 23-30 dB).
 
@@ -186,7 +186,7 @@ hypothesis into one space. Every rule is listed in
 [`tests/test_normalize.py`](tests/test_normalize.py), including the case it
 handles imperfectly: a spoken year and a spoken 4-digit cardinal are genuinely
 ambiguous in English. That residual ambiguity is a reason to treat WER as the
-blunt metric and entity parsing — which is exact — as the decisive one.
+blunt metric and entity parsing, which is exact, as the decisive one.
 
 **WER is pooled, not averaged.** Errors over total reference words, not a mean
 of per-clip rates, which over-weights short clips.
@@ -194,7 +194,7 @@ of per-clip rates, which over-weights short clips.
 **Latency is client-observed.** Measured from one laptop, inclusive of network
 round trip in both directions, with the baseline RTT reported alongside.
 Audio is streamed at real time pace, because pushing it as fast as the socket
-accepts produces latency figures that are meaningless — the server has the
+accepts produces latency figures that are meaningless, because the server has the
 whole utterance before it has finished listening.
 
 **Every response is cached** keyed on `(audio bytes, full request config)`. Any
@@ -244,7 +244,7 @@ src/dgeval/
   circular. Headline numbers come from `say` and from tier C; Aura is a
   cross-engine sanity check only.
 - **Single-turn only.** No barge-in, interruption, multi-turn state or tool
-  calling. The Voice Agent API is phase 2 — the test plan for it is in the
+  calling. The Voice Agent API is phase 2, and the test plan for it is in the
   report's next-steps section, scoped and not yet run.
 
 ## Licence and attribution

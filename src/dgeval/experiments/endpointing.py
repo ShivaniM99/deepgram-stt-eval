@@ -128,7 +128,7 @@ def recommend(points: list[SweepPoint], max_fragmentation: float = 0.10
                        f"{max_fragmentation:.0%} (best was "
                        f"{best_frag:.0%} if measured). Utterances in this corpus "
                        f"contain internal pauses long enough to finalize on, so "
-                       f"the knob alone cannot keep them whole -- the call flow "
+                       f"the knob alone cannot keep them whole. The call flow "
                        f"must reassemble consecutive finals before acting, or "
                        f"utterance_end_ms must be used to delimit turns."),
             "fragmentation_by_setting": [

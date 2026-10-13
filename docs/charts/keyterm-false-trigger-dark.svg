@@ -38,6 +38,6 @@
 <text x="75" y="404" font-size="12" fill="#c3c2b7">medicines we listed</text>
 <rect x="205.39999999999998" y="395" width="11" height="11" rx="2.5" fill="#e66767"/>
 <text x="222.39999999999998" y="404" font-size="12" fill="#c3c2b7">medicines we left out</text>
-<text x="58" y="432.0" font-size="11.5" fill="#d03b3b" font-weight="600">With only half listed, 4.5% of the left-out medicines came back as the name of a DIFFERENT real medicine - the</text>
+<text x="58" y="432.0" font-size="11.5" fill="#d03b3b" font-weight="600">With only half listed, 4.5% of the left-out medicines came back as the name of a DIFFERENT real medicine, the</text>
 <text x="58" y="447.5" font-size="11.5" fill="#d03b3b" font-weight="600">one we had listed. With no list at all, that never happened once.</text>
 </g></svg>
